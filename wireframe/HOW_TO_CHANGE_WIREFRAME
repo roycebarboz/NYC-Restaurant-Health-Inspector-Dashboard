@@ -1,0 +1,39 @@
+# Wireframe Documentation
+
+This folder contains wireframes for the NYC Restaurant Health Inspector Dashboard project.
+
+## Folder Structure
+
+- `excalidraw_wireframe/` - Contains the original Excalidraw files (`.excalidraw` format)
+- `wireframe_images/` - Contains exported PNG images of the wireframes
+
+## How to Use Excalidraw
+
+To edit the wireframes, follow these steps:
+
+1. **Open the file on Excalidraw.com**
+   - Go to [https://excalidraw.com/](https://excalidraw.com/)
+   - Open the `.excalidraw` file from the `excalidraw_wireframe/` folder
+   - Make changes according to your requirements
+   - Save the file
+
+2. **Download the file**
+   - After making your changes, download the updated `.excalidraw` file
+   - Replace the original file in the `excalidraw_wireframe/` folder
+
+3. **View in IDE (Optional)**
+   - To view the `.excalidraw` files directly in your IDE, download the Excalidraw extension from the VS Code/Cursor extension store
+   - This allows you to preview wireframes without opening them in a browser
+
+## Available Wireframes
+
+- Landing Page
+- Login Page
+- Signup Page
+- Map View
+- Search Results
+- Restaurant Detail Page
+- Review Writing Form
+- User Profile
+
+Each wireframe is available in both `.excalidraw` format (editable) and `.png` format (for reference).

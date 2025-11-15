@@ -22,7 +22,7 @@ To edit the wireframes, follow these steps:
    - Replace the original file in the `excalidraw_wireframe/` folder
 
 3. **View in IDE (Optional)**
-   - To view the `.excalidraw` files directly in your IDE, download the Excalidraw extension from the VS Code/Cursor extension store
+   - To view the `.excalidraw` files directly in your IDE, download the Excalidraw extension from the IDE extension store
    - This allows you to preview wireframes without opening them in a browser
 
 ## Available Wireframes

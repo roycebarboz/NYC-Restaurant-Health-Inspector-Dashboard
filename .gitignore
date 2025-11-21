@@ -137,3 +137,7 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+assist/
+*.csv
+Code/tasks/DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv

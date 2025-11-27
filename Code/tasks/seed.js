@@ -1,90 +1,48 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+// to populate the database with the restaurant data from the csv file
+// first download the csv file from the link in the assignment specs
+// then put the csv file in the tasks folder
+// update the csvPath variable to the path of the csv file
+// the go the the Code folder and run the command "npm run seed"
+
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ObjectId } from 'mongodb';
-import { restaurants } from '../config/mongoCollections.js';
+import CreateRestaurant from '../data/restaurants.js';
 import { closeConnection } from '../config/mongoConnection.js';
 
-// Get current file directory (for ES modules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- this function takes in the file path of the csv file which is a string and returns a array of object which represents each row in the csv file
- for example: results = [
-    {
-        "CAMIS": "1234567890",
-        "DBA": "Masala Cafe",
-        ...
-    },
-    {
-        "CAMIS": "1234567891",
-        "DBA": "Joe's Pizza",
-        ..
-    },
- ]
- */
-const csv_parser = async (file_path_of_csv) => {
-    return new Promise((resolve, reject) => {
-        const results = [];
+const seed = async () => {
+    // UPDATE THIS PATH TO THE PATH OF THE CSV FILE
+    const csvPath = path.join(__dirname, '../../assist/DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv');
 
-        fs.createReadStream(file_path_of_csv)
-            .pipe(csv())
-            .on('data', (row) => {
-                results.push(row);
-            })
-            .on('end', () => {
-                console.log(`CSV parsed: ${results.length} rows`);
-                resolve(results);
-            })
-            .on('error', (error) => {
-                reject(error);
-            });
-    });
-};
+    try {
+        console.log('NYC Restaurant Data Import');
 
-/**
- this function takes in the parsed csv rows and returns a map of camis(unique id for each restaurant) to inspection records
- for example: camis_to_inspection_map = {
-    "1234567890": [
-        {
-            "CAMIS": "1234567890",
-            "DBA": "Masala Cafe",
-            "Grade": "A",
-            "Score": 10,
-            "Grade Date": "2025-01-01",
-            ...
-        },
-        {
-            "CAMIS": "1234567890",
-            "DBA": "Masala Cafe",
-            "Grade": "B",
-            "Score": 9,
-            "Grade Date": "2025-01-02",
-            ...
-        },
-    ],
- }
- */
-const group_by_camis = (rows) => {
-    const camis_to_inspection_map = new Map();
+        // this calls the CreateRestaurant function to parse CSV, group by CAMIS, and insert into MongoDB
+        const result = await CreateRestaurant(csvPath);
 
-    for (const row of rows) {
-        const camis = row['CAMIS'];
-        if (!camis || row['INSPECTION DATE'] === '01/01/1900') {
-            continue;
-        }
+        console.log('Import Complete!');
+        console.log(`Total Restaurants Imported: ${result.insertedCount}`);
 
-        if (!camis_to_inspection_map.has(camis)) {
-            camis_to_inspection_map.set(camis, []);
-        }
-
-        camis_to_inspection_map.get(camis).push(row);
+    } catch (error) {
+        console.error('Import failed:', error);
+        throw error;
+    } finally {
+        await closeConnection();
     }
-
-    console.log(`Grouped into ${camis_to_inspection_map.size} unique restaurants`);
-    return camis_to_inspection_map;
 };
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    seed()
+        .then(() => {
+            console.log('\nSeed completed successfully');
+            process.exit(0);
+        })
+        .catch((error) => {
+            console.error('\nSeed failed:', error);
+            process.exit(1);
+        });
+}
 
 export default seed;

@@ -10,7 +10,7 @@ profile,
 reviewIds,
 favoriteRestaurantIds
 ) => {
-
+    
 }
 
 export const getbyUserID = async (

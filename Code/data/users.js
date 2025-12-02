@@ -1,6 +1,7 @@
 import * as helperfunc from "../helpers.js"
 import { dbConnection } from "../config/mongoConnection.js";
 import { ObjectId } from "mongodb";
+import { encryptPassword } from "../middleware/bcrypt_usage.js";
 
 export const createUsers = async (
 username,
@@ -17,7 +18,7 @@ profile
     username = username.trim()
     if (username.length < 2 || username.length > 20) {throw new Error("Register Error 202: Username has to be atleast 2 character's long and less than 20 characters")};
 
-    helperfunc.dupusercheck(username);
+    await helperfunc.dupusercheck(username);
 
     if (typeof email != "string" || email.trim().length==0){throw new Error("Register Error 301: email has to be a Non-Empty String");}
     email = email.trim();
@@ -26,19 +27,18 @@ profile
     
     if (typeof password != "string" || password.trim().length==0){throw new Error("Register Error 401: password has to be a Non-Empty String");}
     password = password.trim();
-    if (username.length < 8 || username.length > 20) {throw new Error("Register Error 402: Password has to be atleast 8 character's long and less than 20 characters")};
-    if(!/[^A-Z][^0-9][^{p}]+$/.test(email)){throw new Error("Register Error 403: password has to have 1 Uppercase Letter, 1 digit and 1 special character");}
+    if (password.length < 8 || password.length > 20) {throw new Error("Register Error 402: Password has to be atleast 8 character's long and less than 20 characters")};
+    if(!/[^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9 ]).+$/.test(email)){throw new Error("Register Error 403: password has to have 1 Uppercase Letter, 1 digit and 1 special character");}
 
-    helperfunc.profilecheck(profile);
+    await helperfunc.profilecheck(profile);
 
     let reviewIds = [];
     let favoriteRestaurantIds = [];
 
     const createdAt = new Date();
-    const lastLogin = new Date();
-    lastLogin.setDate(0);
+    const lastLogin = null;
 
-    password = bcrypt(password);
+    password = await encryptPassword(password);
 
     const insertResult = await usersCollection.insertOne({
         username,
@@ -53,7 +53,8 @@ profile
 
     const newUser = await usersCollection.findOne({_id:insertResult.insertedId});
     if (!newUser) {throw new Error("Register Error 500: Failed to register User")}
-    else { return "{registrationCompleted: true}" };
+    
+    return {registrationCompleted: true};
 }
 
 export const getbyUserID = async (

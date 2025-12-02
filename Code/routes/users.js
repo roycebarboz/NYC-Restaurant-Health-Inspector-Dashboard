@@ -1,9 +1,18 @@
 import {Router} from 'express';
-import { createUsers } from '../data/users';
+import { createUsers } from '../data/users.js';
 const router = Router();
 
 
 router.route('/').get(async (req, res) => {
+    try{
+    res.render('login',{title:"Login"});
+    }
+    catch(e){
+    res.status(500).send(e);
+    }
+});
+
+router.route('/login').get(async (req, res) => {
     try{
     res.render('login',{title:"Login"});
     }
@@ -27,8 +36,8 @@ router
         const { username, email, password, profile} = req.body;
         const result = await createUsers(username,email,password,profile);
 
-        res.render('login',{
-            title: "Login",
+        res.render('landing_page',{
+            title: "landing_page",
             registrationCompleted: true
         });
     }

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { dbConnection } from "./config/mongoConnection"
+import { dbConnection } from "../config/mongoConnection.js";
 
 export const encryptPassword = async (password) => {
     const saltRounds = 16;

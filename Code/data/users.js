@@ -28,7 +28,7 @@ profile
     if (typeof password != "string" || password.trim().length==0){throw new Error("Register Error 401: password has to be a Non-Empty String");}
     password = password.trim();
     if (password.length < 8 || password.length > 20) {throw new Error("Register Error 402: Password has to be atleast 8 character's long and less than 20 characters")};
-    if(!/[^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9 ]).+$/.test(email)){throw new Error("Register Error 403: password has to have 1 Uppercase Letter, 1 digit and 1 special character");}
+    if(!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(password)){throw new Error("Register Error 403: password has to have 1 Uppercase Letter, 1 digit and 1 special character");}
 
     await helperfunc.profilecheck(profile);
 

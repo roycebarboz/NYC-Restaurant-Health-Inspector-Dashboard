@@ -1,5 +1,5 @@
-import { dbConnection } from "./config/mongoConnection"
-import {ObjectID} from mongodb
+import { dbConnection } from "./config/mongoConnection.js";
+import {ObjectId} from "mongodb"
 
 export const dupusercheck = async (username) => {
     let dbConnection = await dbConnection();

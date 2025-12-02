@@ -6,5 +6,7 @@
         <input type="text" name="password" id="login_password_input">
         <button type="submit">Login</button>
     </form>
-<a id="signuplink" href="signup.handlebars">Register Here</a>
+{{#unless registrationCompleted}}
+    <a id="signuplink" href="/signup">Register Here</a>
+{{/unless}}
 </body>

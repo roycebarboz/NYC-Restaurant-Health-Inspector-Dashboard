@@ -1,36 +1,34 @@
 import bcrypt from 'bcrypt';
-const saltRounds = 16;
+import { dbConnection } from "./config/mongoConnection"
 
-const plainTextPassword = 'mySuperAwesomePassword';
-const hash = await bcrypt.hash(plainTextPassword, saltRounds);
-console.log(hash);
-
-let compareToSherlock = false;
-
-try {
-  compareToSherlock = await bcrypt.compare('elementarymydearwatson', hash);
-} catch (e) {
-  //no op
+export const encryptPassword = async (password) => {
+    const saltRounds = 16;
+    return await bcrypt.hash(plainTextPassword, saltRounds);
 }
 
-if (compareToSherlock) {
-  console.log("The passwords match.. this shouldn't be");
-} else {
-  console.log('The passwords do not match');
-}
+export const passwordCheck = async (password,username) =>  {
+    let dbConnection = await dbConnection();
+    let usersCollection = dbConnection.collection("users");
 
-let compareToMatch = false;
+    const potentialUser = await usersCollection.findOne({username: {username}});
+    if (!potentialUser) {throw new Error("Password Auth 100: User does not Exist")};
+    let AuthUser = false;
 
-try {
-  compareToMatch = await bcrypt.compare('mySuperAwesomePassword', hash);
-} catch (e) {
-  //no op
-}
+    try {
+        AuthUser = await bcrypt.compare(password, potentialUser.password);
+    }
+    catch(e){
+        throw new Error("Password Auth 101: Failure to Compare");
+    }
 
-if (compareToMatch) {
-  console.log('The passwords match.. this is good');
-} else {
-  console.log(
-    'The passwords do not match, this is not good, they should match'
-  );
-}
+    if(AuthUser){
+        await usersCollection.updateOne(
+          {_id: potentialUser._id},
+          {$set: {lastLogin: new Date()}}
+        );
+        return {UserAuthentication:True};
+    }
+    else{
+        return {UserAuthentication:False};
+    }
+  }

@@ -23,12 +23,12 @@ export const passwordCheck = async (password,username) =>  {
 
     if(AuthUser){
         await usersCollection.updateOne(
-          {_id: potentialUser._id},
-          {$set: {lastLogin: new Date()}}
+        {_id: potentialUser._id},
+        {$set: {lastLogin: new Date()}}
         );
         return {UserAuthentication:True};
     }
     else{
         return {UserAuthentication:False};
     }
-  }
+}

@@ -7,6 +7,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import CreateRestaurant from '../data/restaurants.js';
+import { createInspection } from '../data/inspections.js';
 import { closeConnection } from '../config/mongoConnection.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,19 +16,23 @@ const __dirname = path.dirname(__filename);
 const seed = async () => {
     // UPDATE THIS PATH TO THE PATH OF THE CSV FILE
     const csvPath = path.join(__dirname, '../../assist/DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv');
-    
-    //Chenxin used this path
-    //const csvPath = path.join(__dirname, 'DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv');
-    
 
     try {
-        console.log('NYC Restaurant Data Import');
+        console.log('Seeding the database with the restaurant data from the csv file\n');
 
-        // this calls the CreateRestaurant function to parse CSV, group by CAMIS, and insert into MongoDB
-        const result = await CreateRestaurant(csvPath);
+        // Importing Restaurants in the database
+        console.log('Importing Restaurants...');
+        const restaurantResult = await CreateRestaurant(csvPath);
+        console.log(`✅ Restaurants Import Complete: ${restaurantResult.insertedCount} restaurants imported\n`);
 
-        console.log('Import Complete!');
-        console.log(`Total Restaurants Imported: ${result.insertedCount}`);
+        // Importing Inspections in the database afte
+        console.log('Importing Inspections...');
+        const inspectionResult = await createInspection(csvPath);
+        console.log(`✅ Inspections Import Complete: ${inspectionResult.insertedCount} inspections imported\n`);
+
+        console.log('All Data Import Complete!');
+        console.log(`Total Restaurants: ${restaurantResult.insertedCount}`);
+        console.log(`Total Inspections: ${inspectionResult.insertedCount}`);
 
     } catch (error) {
         console.error('Import failed:', error);

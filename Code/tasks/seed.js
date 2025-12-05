@@ -15,6 +15,10 @@ const __dirname = path.dirname(__filename);
 const seed = async () => {
     // UPDATE THIS PATH TO THE PATH OF THE CSV FILE
     const csvPath = path.join(__dirname, '../../assist/DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv');
+    
+    //Chenxin used this path
+    //const csvPath = path.join(__dirname, 'DOHMH_New_York_City_Restaurant_Inspection_Results_20251005.csv');
+    
 
     try {
         console.log('NYC Restaurant Data Import');

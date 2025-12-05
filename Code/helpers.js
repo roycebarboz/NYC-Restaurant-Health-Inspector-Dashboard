@@ -1,17 +1,12 @@
 import { dbConnection } from "./config/mongoConnection.js";
 import {ObjectId} from "mongodb"
 
-export const dupusercheck = async (username) => {
+export const dupusercheck = async (email) => {
     let dbConnection = await dbConnection();
     let usersCollection = dbConnection.collection("users");
 
-    const usercheck = await usersCollection.findone({
-        username: {
-            $regex: `^${username}`,
-            $options: "i"
-        }
-    });
-    if(usercheck){throw new Error("DupCheck Error 100: Username is already registered");}
+    const usercheck = await usersCollection.findOne({email:email});
+    if(usercheck){throw new Error("DupCheck Error 100: Email is already registered");}
 
     return true;
 }
@@ -52,8 +47,8 @@ export const profilecheck = async (profile) => {
     (currentDate.getMonth() === given_dob.getMonth() && currentDate.getDate() >= given_dob.getDate());
     if (!hasHadBirthday) age--;
 
-    if (age < 18) throw new Error("ProfileCheck 34: Student must be at least 18 years old");
-    if (age > 100) throw new Error("ProfileCheck 35: Student cannot be older than 100 years");
+    if (age < 18) throw new Error("ProfileCheck 34: User must be at least 18 years old");
+    if (age > 100) throw new Error("ProfileCheck 35: User cannot be older than 100 years");
 
     return profile;
 }

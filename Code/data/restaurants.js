@@ -133,7 +133,7 @@ const latest_inspection_grade = (inspections) => {
     return {
         currentGrade: latest_grade,
         currentScore: latest_score,
-        grade_date: latest_date ? latest_date.toISOString().split('T')[0] : null
+        gradeDate: latest_date ? latest_date.toISOString().split('T')[0] : null
     };
 };
 
@@ -174,7 +174,7 @@ const CreateRestaurant = async (csvFilePath) => {
     for (const [camis, inspectionRecords] of camis_to_inspection_map.entries()) {
         const firstRecord = inspectionRecords[0];
 
-        const { currentGrade, currentScore, grade_date } = latest_inspection_grade(inspectionRecords);
+        const { currentGrade, currentScore, gradeDate: grade_date } = latest_inspection_grade(inspectionRecords);
 
         const latitude = parseFloat(firstRecord['Latitude']) || 0;
         const longitude = parseFloat(firstRecord['Longitude']) || 0;
@@ -191,7 +191,7 @@ const CreateRestaurant = async (csvFilePath) => {
             cuisineType: firstRecord['CUISINE DESCRIPTION'] || 'Unknown',
             currentGrade: currentGrade,
             currentScore: currentScore,
-            grade_date: grade_date,
+            gradeDate: grade_date,
             location: {
                 latitude: latitude,
                 longitude: longitude
@@ -204,7 +204,7 @@ const CreateRestaurant = async (csvFilePath) => {
             nta: firstRecord['NTA'] || '',
             // will be populated by inspections.js
             inspectionIds: [],
-            // will be populated by frontend code-------
+            // will be populated by when users start reviewing restaurants-------
             reviewIds: [],
             averageUserRating: 0,
             totalReviews: 0,

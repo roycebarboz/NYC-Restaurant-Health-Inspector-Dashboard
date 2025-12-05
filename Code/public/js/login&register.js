@@ -14,12 +14,11 @@ signupform.addEventListener('submit', (event) => {
     event.preventDefault();
     clearError();
 
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const userId = document.getElementById("userId").value.trim().toLowerCase();
+    const username = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("userId").value.trim().toLowerCase();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const favoriteQuote = document.getElementById("favoriteQuote").value.trim();
+    const last = document.getElementById("favoriteQuote").value.trim();
     const backgroundColor = document.getElementById("backgroundColor").value;
     const fontColor = document.getElementById("fontColor").value;
     const role = document.getElementById("role").value.trim().toLowerCase();

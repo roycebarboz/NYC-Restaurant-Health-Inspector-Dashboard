@@ -181,7 +181,7 @@ favoriteRestaurantIds
     const newUser = await usersCollection.findOne({_id:insertResult.insertedId});
     if (!newUser) {throw new Error("Update Error 500: Failed to register User")}
     
-    return {registrationCompleted: true};
+    return {updateCompleted: true};
 };
 
 export const deleteUsers = async (

@@ -10,7 +10,9 @@ password,
 profile
 ) => {
     if (!username||!email||!password||!profile){throw new Error("Register Error 101: Missing critical variables")};
-    
+    const db = await dbConnection();
+    const usersCollection = db.collection("users");
+
     if (typeof username != "string"|| username.trim().length == 0) {throw new Error("Register Error 201: Username has to be a valid non empty string")};
     username = username.trim()
     if (username.length < 2 || username.length > 20) {throw new Error("Register Error 202: Username has to be atleast 2 character's long and less than 20 characters")};
@@ -19,8 +21,9 @@ profile
     email = email.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){throw new Error("Register Error 302: email has to be valid email");}
 
-    await helperfunc.dupusercheck(email);
-    
+    const usercheck = await usersCollection.findOne({email:email});
+    if(usercheck){throw new Error("DupCheck Error 100: Email is already registered");}
+
     if (typeof password != "string" || password.trim().length==0){throw new Error("Register Error 401: password has to be a Non-Empty String");}
     password = password.trim();
     if (password.length < 8 || password.length > 20) {throw new Error("Register Error 402: Password has to be atleast 8 character's long and less than 20 characters")};
@@ -36,8 +39,6 @@ profile
 
     password = await bcrypt.hash(password,16);
 
-    const db = await dbConnection();
-    const usersCollection = db.collection("users");
     const insertResult = await usersCollection.insertOne({
         username,
         email,
@@ -138,6 +139,9 @@ favoriteRestaurantIds
 ) => {
     if (!id||!username||!email||!password||!profile){throw new Error("Update Error 101: Missing critical variables")};
     
+    const db = await dbConnection();
+    const usersCollection = db.collection("users");
+
     if (typeof id !== "string" || id.trim().length === 0){throw new Error("Update Error 1: Please input a valid non empty String")};
     id = id.trim();
     if(!ObjectId.isValid(id)){throw new Error("Update Error 2: Provided id is not a Valid Id");}
@@ -150,8 +154,6 @@ favoriteRestaurantIds
     if (typeof email != "string" || email.trim().length==0){throw new Error("Update Error 301: email has to be a Non-Empty String");}
     email = email.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){throw new Error("Update Error 302: email has to be valid email");}
-
-    await helperfunc.dupusercheck(email);
     
     if (typeof password != "string" || password.trim().length==0){throw new Error("Update Error 401: password has to be a Non-Empty String");}
     password = password.trim();
@@ -165,8 +167,6 @@ favoriteRestaurantIds
     
     password = await bcrypt.hash(password,16);
 
-    const db = await dbConnection();
-    const usersCollection = db.collection("users");
     const insertResult = await usersCollection.updateOne(
         {_id: id},
         {

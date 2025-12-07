@@ -2,6 +2,9 @@
     <main>
         <form id="signup-form" name="signup-form" method="POST" action="/register">
 
+            {{#if error}}
+            <p class="error" id="server-error">{{error}}</p>
+            {{/if}}
             <label for="username">Username:</label>
             <input type="text" id="username" name="username">
             <span class="error" id="username-error"></span>
@@ -21,7 +24,7 @@
             <input type="text" id="lastName" name="lastName">
             <span class="error" id="lastName-error"></span>
             <label for="dateOfBirth">Date Of Birth:</label>
-            <input type="text" id="dateOfBirth" name="dateOfBirth">
+            <input type="date" id="dateOfBirth" name="dateOfBirth">
             <span class="error" id="dateOfBirth-error"></span>
             <button type="submit" name="submitButton" id="submitButton">Submit</button>
         </form>

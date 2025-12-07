@@ -10,6 +10,7 @@ function updateError(id, message){
     if (errorbox) {errorbox.textContent = message};
 }
 
+if(signupform){
 signupform.addEventListener('submit', (event) => {
     event.preventDefault();
     clearError();
@@ -21,6 +22,7 @@ signupform.addEventListener('submit', (event) => {
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value;
     const dateOfBirth = document.getElementById("dateOfBirth").value;
+    
     
     let check = true;
 
@@ -66,12 +68,12 @@ signupform.addEventListener('submit', (event) => {
         check = false;
         }
 
-    if(!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/([0-9]{4})$/.test(dateOfBirth)){
-        updateError("dateOfBirth-error", "Date of Birth has to be in MM/DD/YYYY format");
+    if(!/^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(dateOfBirth)){
+        updateError("dateOfBirth-error", "Date of Birth has to be in YYYY/MM/DD format");
         check = false;
         };
         
-    let [month,day,year] = dateOfBirth.split("/").map(Number);
+    let [year,month,day] = dateOfBirth.split("-").map(Number);
     const given_dob = new Date(year,month-1,day);
     if (given_dob.getFullYear() !== year || given_dob.getMonth() !== month - 1 || given_dob.getDate() !== day){
         updateError("dateOfBirth-error", "Invalid Date");
@@ -96,7 +98,9 @@ signupform.addEventListener('submit', (event) => {
 
     if(check){signupform.submit();}
 });
+}
 
+if(signinform){
 signinform.addEventListener('submit', (event) => {
     event.preventDefault();
     clearError();
@@ -105,8 +109,8 @@ signinform.addEventListener('submit', (event) => {
     const password = document.getElementById("password").value.trim();
 
     let check = true;
-    if (email.length < 5 || email.length > 10 || !/^[a-z0-9]+$/.test(email)) {
-        updateError("signin-error", "email or password was incorrect");
+    if (email.length < 2 || email.length > 20 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        updateError("email-error", "Email has to be valid email");
         check = false;
     }
     
@@ -121,5 +125,5 @@ signinform.addEventListener('submit', (event) => {
     }
 
     if (check) {signinform.submit();}
-});
-
+    });
+}

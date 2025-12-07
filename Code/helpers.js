@@ -34,7 +34,7 @@ export const profilecheck = async (profile) => {
     const dob = profile["dateOfBirth"];
     if (typeof dob != "string" || dob.trim().length==0){throw new Error("ProfileCheck 31: date of birth has to be a Non-Empty String");}
     dob=dob.trim();
-    if(!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/([0-9]{4})$/.test(dob)){throw new Error("ProfileCheck 32: date of birth has to be a MM/DD/YYYY");}
+    if(!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/([0-9]{4})$/.test(dob)){throw new Error("ProfileCheck 32: date of birth has to be in MM/DD/YYYY format");}
         
     let [month,day,year] = dob.split("/").map(Number);
     const given_dob = new Date(year,month-1,day);
@@ -51,4 +51,33 @@ export const profilecheck = async (profile) => {
     if (age > 100) throw new Error("ProfileCheck 35: User cannot be older than 100 years");
 
     return profile;
+}
+
+export const validatedArray = async(array, attribute, fetchFunction) => {
+    if (!Array.isArray(array)) {
+        throw new Error(`Valid Array Error 1: ${attribute} must be an array`);
+    }
+
+    if (array.length === 0) return [];
+
+    const validatedIds = [];
+
+    for(let ValidID of array){
+        if (typeof ValidID !== "string"|| ValidID.trim().length==0){
+            throw new Error(`Valid Array Error 2: ${ValidID} has to be a nonempty String`);
+        } 
+        ValidID = ValidID.trim();
+        if (!ObjectId.isValid(ValidID)) {throw new Error(`Valid Array Error 3: ${attribute} contains an invalid ObjectId`);}
+
+        const objId = new ObjectId(ValidID);
+
+        try {await fetchFunction(objId);} 
+        catch (e) {
+            throw new Error(`Valid Array Error 4: ${attribute} contains a non-existing id. Error thrown is ${e.message}`);
+        }
+
+        validatedIds.push(objId);
+    };
+
+    return validatedIds;
 }

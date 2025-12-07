@@ -14,29 +14,23 @@ signupform.addEventListener('submit', (event) => {
     event.preventDefault();
     clearError();
 
-    const username = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("userId").value.trim().toLowerCase();
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const last = document.getElementById("favoriteQuote").value.trim();
-    const backgroundColor = document.getElementById("backgroundColor").value;
-    const fontColor = document.getElementById("fontColor").value;
-    const role = document.getElementById("role").value.trim().toLowerCase();
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value;
+    const dateOfBirth = document.getElementById("dateOfBirth").value;
     
     let check = true;
 
-    if (firstName.length < 2 || firstName.length > 20 || !/^[A-Za-z]+$/.test(firstName)) {
-        updateError("firstName-error", "First Name must be 2-20 letters");
+    if (username.length < 2 || username.length > 20 || !/^[A-Za-z]+$/.test(username)) {
+        updateError("username-error", "UserName must be 2-20 letters");
         check = false;
     }
 
-    if (lastName.length < 2 || lastName.length > 20 || !/^[A-Za-z]+$/.test(lastName)) {
-        updateError("lastName-error", "Last Name must be 2-20 letters");
-        check = false;
-    }
-
-    if (userId.length < 5 || userId.length > 10 || !/^[a-z0-9]+$/.test(userId)) {
-        updateError("userId-error", "User Id must be 5-10 letters or numbers");
+    if (email.length < 2 || email.length > 20 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        updateError("email-error", "Email has to be valid email");
         check = false;
     }
 
@@ -62,30 +56,43 @@ signupform.addEventListener('submit', (event) => {
         check = false;
         }
 
-    if (favoriteQuote.length < 20 || favoriteQuote.length > 255) {    
-        updateError("favoriteQuote-error", "Quote must be atleast 20 characters long but less than 255 characters");
+    if (firstName.length < 2 || firstName.length > 20 || !/^[A-Za-z]+$/.test(firstName)) {
+        updateError("firstName-error", "First Name must be 2-20 letters");
         check = false;
         }
 
-    const checkhexcolor = /^#[0-9A-Fa-f]{6}$/;
-    if (!checkhexcolor.test(backgroundColor)) {
-        updateError("backgroundColor-error", "Background must be in proper Hex Format");
-        check = false;
-        }
-    if (!checkhexcolor.test(fontColor)) {
-        updateError("fontColor-error", "Font must be in proper Hex Format");
+    if (lastName.length < 2 || lastName.length > 20 || !/^[A-Za-z]+$/.test(lastName)) {
+        updateError("lastName-error", "First Name must be 2-20 letters");
         check = false;
         }
 
-    if (backgroundColor === fontColor){    
-        updateError("backgroundColor-error", "Background and Font color must be different");
+    if(!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/([0-9]{4})$/.test(dateOfBirth)){
+        updateError("dateOfBirth-error", "Date of Birth has to be in MM/DD/YYYY format");
         check = false;
-        }
+        };
+        
+    let [month,day,year] = dateOfBirth.split("/").map(Number);
+    const given_dob = new Date(year,month-1,day);
+    if (given_dob.getFullYear() !== year || given_dob.getMonth() !== month - 1 || given_dob.getDate() !== day){
+        updateError("dateOfBirth-error", "Invalid Date");
+        check = false;
+    };
 
-    if (role != "user" && role != "superuser"){    
-        updateError("role-error", "Incheck role provided");
+    let currentDate = new Date();
+    let age = currentDate.getFullYear() - year;
+    const hasHadBirthday =
+    currentDate.getMonth() > given_dob.getMonth() ||
+    (currentDate.getMonth() === given_dob.getMonth() && currentDate.getDate() >= given_dob.getDate());
+    if (!hasHadBirthday) age--;
+
+    if (age < 18){
+        updateError("dateOfBirth-error", "User cannot be younger that 18 yrs old");
         check = false;
-        }
+    };
+    if (age > 100){
+        updateError("dateOfBirth-error", "User cannot be older that 100 yrs old");
+        check = false;
+    };
 
     if(check){signupform.submit();}
 });

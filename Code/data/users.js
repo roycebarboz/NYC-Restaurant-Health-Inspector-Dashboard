@@ -1,7 +1,7 @@
 import * as helperfunc from "../helpers.js"
 import { dbConnection } from "../config/mongoConnection.js";
 import { ObjectId } from "mongodb";
-import { encryptPassword } from "../middleware/bcrypt_usage.js";
+import bcrypt from "bcrypt"
 
 export const createUsers = async (
 username,
@@ -57,73 +57,72 @@ profile
 
 export const loginUser = async(email,password) => {
 
-  const db = await dbConnection();
-  const usersCollection = db.collection("users");
+    const db = await dbConnection();
+    const usersCollection = db.collection("users");
 
-  if (!email||!password){throw new Error("Either the email or password is invalid")};
-  
-  if (typeof email != "string" || email.trim().length==0){throw new Error("Register Error 301: email has to be a Non-Empty String");}
-  email = email.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){throw new Error("Register Error 302: email has to be valid email");}
+    if (!email||!password){throw new Error("Either the email or password is invalid")};
+    if (typeof email != "string" || email.trim().length==0){throw new Error("Register Error 301: email has to be a Non-Empty String");}
+    email = email.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){throw new Error("Register Error 302: email has to be valid email");}
 
-  if (typeof password != "string" || password.trim().length==0){throw new Error("Either the email or password is invalid")};
-  password = password.trim();
-  if (password.length < 8) {throw new Error("Either the email or password is invalid")};
-  if (/\s/.test(password)){throw new Error("Either the email or password is invalid")};
-  if(!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(password)){throw new Error("Either the email or password is invalid")};
+    if (typeof password != "string" || password.trim().length==0){throw new Error("Either the email or password is invalid")};
+    password = password.trim();
+    if (password.length < 8) {throw new Error("Either the email or password is invalid")};
+    if (/\s/.test(password)){throw new Error("Either the email or password is invalid")};
+    if(!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(password)){throw new Error("Either the email or password is invalid")};
 
-  const potentialUser = await usersCollection.findOne({email: email});
-  if (!potentialUser) {throw new Error("Either the email or password is invalid")};
+    const potentialUser = await usersCollection.findOne({email: email});
+    if (!potentialUser) {throw new Error("Either the email or password is invalid")};
 
-  const AuthUser = await bcrypt.compare(password, potentialUser.password);
-  if(!AuthUser){throw new Error("Either the email or password is invalid")};
+    const AuthUser = await bcrypt.compare(password, potentialUser.password);
+    if(!AuthUser){throw new Error("Either the email or password is invalid")};
 
-  const currentdate = new Date();
-  const month = String(currentdate.getMonth()+1).padStart(2,'0');
-  const day = String(currentdate.getDate()).padStart(2,'0');
-  const year = currentdate.getFullYear()
-  let hours = currentdate.getHours();
-  let zone = "";
-  const minutes = String(currentdate.getMinutes()).padStart(2,'0');
-  if (hours>=12){zone="PM"}
-  else {zone = "AM"}
-  hours = hours %12 || 12;
-  const formattedhour = String(hours).padStart(2,'0');
+    const currentdate = new Date();
+    const month = String(currentdate.getMonth()+1).padStart(2,'0');
+    const day = String(currentdate.getDate()).padStart(2,'0');
+    const year = currentdate.getFullYear()
+    let hours = currentdate.getHours();
+    let zone = "";
+    const minutes = String(currentdate.getMinutes()).padStart(2,'0');
+    if (hours>=12){zone="PM"}
+    else {zone = "AM"}
+    hours = hours %12 || 12;
+    const formattedhour = String(hours).padStart(2,'0');
 
-  const lastLoginformatted = `${month}/${day}/${year} ${formattedhour}:${minutes}${zone}`
+    const lastLoginformatted = `${month}/${day}/${year} ${formattedhour}:${minutes}${zone}`
 
-  await usersCollection.updateOne(
-    {_id: potentialUser._id},
-    {$set: {lastLogin: lastLoginformatted}}
-  );
+    await usersCollection.updateOne(
+        {_id: potentialUser._id},
+        {$set: {lastLogin: lastLoginformatted}}
+    );
 
-  return {
-    username:potentialUser.firstName,
-    email:potentialUser.email,
-    profile:potentialUser.profile,
-    reviewIds:potentialUser.reviewIds,
-    favoriteRestaurantIds:potentialUser.favoriteRestaurantIds,
-    createdAt:potentialUser.createdAt,
-    lastLogin:potentialUser.lastLogin
-  };
+    return {
+        username:potentialUser.username,
+        email:potentialUser.email,
+        profile:potentialUser.profile,
+        reviewIds:potentialUser.reviewIds,
+        favoriteRestaurantIds:potentialUser.favoriteRestaurantIds,
+        createdAt:potentialUser.createdAt,
+        lastLogin:potentialUser.lastLogin
+    };
 };
 
-export const getUserbyID = async (id) => {
+export const GetUserbyID = async (id) => {
 
     if (typeof id === "string" && id.trim().length!=0){
         id = id.trim()
-        if (id.length===0||!ObjectId.isValid(id)){throw new Error("Getuser 102: Provided id is not a Valid Id");}
+        if (id.length===0||!ObjectId.isValid(id)){throw new Error("GetUser 102: Provided id is not a Valid Id");}
         id = new ObjectId(id);
     }
-    else if (typeof id === "object"){}
+    else if (id instanceof ObjectId){}
     else {
-        throw new Error("Getuser 102: Provided id is not a Valid Id");
+        throw new Error("GetUser 102: Provided id is not a Valid Id");
     }
     const db = await dbConnection();
     const usersCollection = db.collection("users");
 
     const resultUser = await usersCollection.findOne({_id:id});
-    if (!resultUser){throw new Error("Getuser 103: User with email does not exist");}
+    if (!resultUser){throw new Error("GetUser 103: User with Id does not exist");}
 
     return resultUser;
 };
@@ -161,25 +160,27 @@ favoriteRestaurantIds
 
     await helperfunc.profilecheck(profile);
 
-    let reviewIds = [];
-    let favoriteRestaurantIds = [];
-
+    await helperfunc.validatedArray(reviewIds,"reviewIds",GetbyReviewID);
+    await helperfunc.validatedArray(favoriteRestaurantIds,"favoriteRestaurantIds",GetbyRestaurantID);
+    
     password = await bcrypt.hash(password,16);
 
     const db = await dbConnection();
     const usersCollection = db.collection("users");
     const insertResult = await usersCollection.updateOne(
-        {_id: id},{%set:
-        {username: username},
-        {email: email}
-        {password: password},
-        {profile: profile},
-        {reviewIds: reviewIds},
-        {favoriteRestaurantIds: favoriteRestaurantIds}}
+        {_id: id},
+        {
+            $set: {
+        username: username,
+        email: email,
+        password: password,
+        profile: profile,
+        reviewIds: reviewIds,
+        favoriteRestaurantIds: favoriteRestaurantIds}}
     );
 
-    const newUser = await usersCollection.findOne({_id:insertResult.insertedId});
-    if (!newUser) {throw new Error("Update Error 500: Failed to register User")}
+    if (insertResult.matchedCount === 0){throw new Error("Update Error 500: No user exists with given ID");}
+    if (insertResult.modifiedCount === 0){throw new Error("Update Error 501: Update did not modify any fields");}
     
     return {updateCompleted: true};
 };
@@ -187,5 +188,19 @@ favoriteRestaurantIds
 export const deleteUsers = async (
 id
 ) => {
+    if (typeof id === "string" && id.trim().length!=0){
+        id = id.trim()
+        if (id.length===0||!ObjectId.isValid(id)){throw new Error("DeleteUser 102: Provided id is not a Valid Id");}
+        id = new ObjectId(id);
+    }
+    else if (typeof id === "object"){}
+    else {
+        throw new Error("DeleteUser 102: Provided id is not a Valid Id");
+    }
+    const db = await dbConnection();
+    const usersCollection = db.collection("users");
 
+    const resultUser = await usersCollection.deleteOne({_id:id});
+
+    return {deleteCompleted: true};
 }

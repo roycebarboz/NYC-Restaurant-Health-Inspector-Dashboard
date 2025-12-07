@@ -16,6 +16,8 @@
     "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
+    "express-session": "^1.18.2",
+    "xss": "^1.0.15",
     "mongodb": "^7.0.0",
     "csv-parser": "^3.0.0"
   }

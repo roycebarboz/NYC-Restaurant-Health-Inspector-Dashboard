@@ -171,12 +171,13 @@ favoriteRestaurantIds
         {_id: id},
         {
             $set: {
-        username: username,
-        email: email,
-        password: password,
-        profile: profile,
-        reviewIds: reviewIds,
-        favoriteRestaurantIds: favoriteRestaurantIds}}
+            username: username,
+            email: email,
+            password: password,
+            profile: profile,
+            reviewIds: reviewIds,
+            favoriteRestaurantIds: favoriteRestaurantIds}
+        }
     );
 
     if (insertResult.matchedCount === 0){throw new Error("Update Error 500: No user exists with given ID");}

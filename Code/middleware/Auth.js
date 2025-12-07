@@ -17,8 +17,7 @@ export const redirect = (req, res, next) => {
     const user = req.session.user;
 
     if(!user){return next();}
-    if (user){return res.redirect("/landing_page");}
-    next();
+    return res.redirect("/landing_page");
 };
 
 export const loginRedirect = (req, res, next) => {

@@ -101,22 +101,22 @@ signinform.addEventListener('submit', (event) => {
     event.preventDefault();
     clearError();
 
-    const userId = document.getElementById("userId").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
     let check = true;
-    if (userId.length < 5 || userId.length > 10 || !/^[a-z0-9]+$/.test(userId)) {
-        updateError("signin-error", "User Id must be 5–10 lowercase letters or numbers.");
+    if (email.length < 5 || email.length > 10 || !/^[a-z0-9]+$/.test(email)) {
+        updateError("signin-error", "email or password was incorrect");
         check = false;
     }
     
     if (password.length < 8 || /\s/.test(password)) {
-        updateError("signin-error", "Password must be at least 8 characters and contain no spaces.");
+        updateError("signin-error", "email or password was incorrect");
         check = false;
     }
 
     if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(password)) {
-        updateError("signin-error", "Password must contain 1 uppercase, 1 digit, and 1 special character.");
+        updateError("signin-error", "email or password was incorrect");
         check = false;
     }
 

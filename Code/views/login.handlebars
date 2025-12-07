@@ -1,0 +1,16 @@
+<body>
+    <main>
+        <form id="signin-form" method="POST" action="/login">
+            {{#if error}}
+            <p class="error" id="signin-error">{{error}}</p>
+            {{/if}}
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <button type="submit" name="submit_button" id="submit_button">Submit</button>
+        </form>
+        <a id="register" href="/register">Click here to signup!</a>
+    </main>
+    <script src="/public/js/login&register.js"></script>
+</body>

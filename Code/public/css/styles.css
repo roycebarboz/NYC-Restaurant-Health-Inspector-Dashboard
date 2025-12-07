@@ -1,0 +1,45 @@
+body{
+    height: 100%;
+    margin: 10px;
+    padding: 15px;
+}
+
+form{
+    width: 420px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-column-gap: 14px;
+    row-gap: 10px;
+    margin: 40px auto;
+}
+
+label{
+    grid-column: 1/2;
+    text-align: right;
+    padding-top: 5px;
+}
+
+input{
+    grid-column: 2/3;
+    padding: 7px;
+}
+
+.error{
+    grid-column: 1/3;
+    color:red;
+    font-size: 13px;
+    margin: 10px;
+}
+
+button{
+    grid-column: 1/3;
+    padding: 10px
+}
+
+a{
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: inherit;
+}

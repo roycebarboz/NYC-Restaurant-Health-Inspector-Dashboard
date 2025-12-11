@@ -2,7 +2,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { ObjectId } from 'mongodb';
 import { restaurants as restaurantsCollection } from '../config/mongoCollections.js';
-
+import { string_validation, zipcode_validation, score_validation, grade_validation } from '../helpers.js';
 /**
  this function takes in the file path of the csv file which is a string and returns a array of object which represents each row in the csv file
  for example: results = [
@@ -160,7 +160,7 @@ const latest_inspection_grade = (inspections) => {
 // then we insert the restaurant documents into the database
 // then we create indexes for better query performance so for example we can query by camis, borough, etc in a more efficient way
 
-const CreateRestaurant = async (csvFilePath) => {
+export const CreateRestaurant = async (csvFilePath) => {
 
     console.log('Step 1: Parsing CSV file...');
     const csvRows = await csv_parser(csvFilePath);
@@ -249,4 +249,110 @@ const CreateRestaurant = async (csvFilePath) => {
     return { insertedCount: inserted };
 };
 
-export default CreateRestaurant;
+// SearchRestaurants takes in the filters and returns the restaurants that match the filters
+// for example: SearchRestaurants({ name: 'Restaurant', borough: 'Manhattan', cuisineType: 'Italian', currentGrade: 'A', zipcode: '10001', location: { latitude: 40.7128, longitude: -74.0060 } }) = {
+//    "camis": "1234567890",
+//    "name": "Restaurant",
+//    "borough": "Manhattan",
+//    ...
+// }
+//first we get the restaurants collection
+// then we build the query object based on the filters
+//then we fill the query object with the filters with the help of regex
+//name, borough, cuisineType, zipcode, score range, grade
+//for lots of restaurants, we use pagination to return the results
+export const SearchRestaurants = async (filters = {}) => {
+    const restaurants_collection = await restaurantsCollection();
+    const res_search_query = {};
+
+    // Validate and add name filter if provided
+    if (filters.name !== undefined && filters.name !== null) {
+        const validated_name = string_validation(filters.name, 'name');
+        res_search_query.name = { $regex: validated_name, $options: 'i' };
+    }
+
+    // Validate and add borough filter if provided
+    if (filters.borough !== undefined && filters.borough !== null) {
+        const validated_borough = string_validation(filters.borough, 'borough');
+        res_search_query.borough = validated_borough;
+    }
+
+    // Validate and add cuisineType filter if provided
+    if (filters.cuisineType !== undefined && filters.cuisineType !== null) {
+        const validated_cuisineType = string_validation(filters.cuisineType, 'cuisineType');
+        res_search_query.cuisineType = { $regex: validated_cuisineType, $options: 'i' };
+    }
+
+    // Validate and add zipcode filter if provided
+    if (filters.zipcode !== undefined && filters.zipcode !== null) {
+        const validated_zipcode = zipcode_validation(filters.zipcode);
+        res_search_query.zipcode = validated_zipcode;
+    }
+
+    // Validate and add score range filters if provided
+    let validated_min_score;
+    if (filters.minScore !== undefined && filters.minScore !== null) {
+        validated_min_score = score_validation(filters.minScore);
+    }
+
+    let validated_max_score;
+    if (filters.maxScore !== undefined && filters.maxScore !== null) {
+        validated_max_score = score_validation(filters.maxScore);
+    }
+
+    // Build score range query if either min or max is provided
+    if (validated_min_score !== undefined || validated_max_score !== undefined) {
+        res_search_query.currentScore = {};
+        if (validated_min_score !== undefined) {
+            res_search_query.currentScore.$gte = validated_min_score;
+        }
+        if (validated_max_score !== undefined) {
+            res_search_query.currentScore.$lte = validated_max_score;
+        }
+    }
+
+    // Validate and add grade filter if provided
+    if (filters.grade !== undefined && filters.grade !== null) {
+        const validated_grade = grade_validation(filters.grade);
+        res_search_query.currentGrade = validated_grade;
+    }
+
+    // first we validate page and restaurant_per_page
+    // then we calculate how many documents to skip based on page and restaurant_per_page
+    // then we query the restaurants, skipping and limiting accordingly
+    // then we convert the results to an array
+    // then we get the total count of matching documents in the database
+    // then we calculate the total number of pages
+    // then we return the restaurants along with pagination information
+
+    const page = filters.page !== undefined && filters.page !== null ? parseInt(filters.page, 10) : 1;
+    const restaurant_per_page = filters.restaurant_per_page !== undefined && filters.restaurant_per_page !== null ? parseInt(filters.restaurant_per_page, 10) : 20;
+
+    if (isNaN(page) || page < 1) {
+        throw 'page must be a positive integer';
+    }
+    if (isNaN(restaurant_per_page) || restaurant_per_page < 1 || restaurant_per_page > 20) {
+        throw 'restaurant_per_page must be between 1 and 20';
+    }
+
+    const skip_prev_restaurants = (page - 1) * restaurant_per_page;
+
+    const restaurants = await restaurants_collection
+        .find(res_search_query)
+        .skip(skip_prev_restaurants)
+        .limit(restaurant_per_page)
+        .toArray();
+
+    const totalCount = await restaurants_collection.countDocuments(res_search_query);
+    const totalPages = Math.ceil(totalCount / restaurant_per_page);
+
+    return {
+        restaurants: restaurants,
+        pagination: {
+            page: page,
+            restaurant_per_page: restaurant_per_page,
+            totalCount: totalCount,
+            totalPages: totalPages
+        }
+    };
+}

@@ -74,3 +74,77 @@ export const validatedArray = async (array, attribute, fetchFunction) => {
 
     return validatedIds;
 }
+
+export const string_validation = (str, var_name = 'input') => {
+    //first we check if the string is undefined or null
+    //then we check if the input is of type string
+    //then we trim it
+    //then we check if the length is greater than 0
+    //if all conditions are met, we return the input
+    //if not, we throw an error
+    if (str === undefined || str === null) {
+      throw `${var_name} cannot be undefined or null`;
+    }
+    if (typeof str !== 'string') {
+      throw `${var_name} must be a string`;
+    }
+    const s = str.trim();
+    if (s.length === 0) {
+      throw `${var_name} cannot be an empty string or just spaces`;
+    }
+    return s;
+  };
+
+export const zipcode_validation = (zipcode) => {
+    //first check if the zipcode exists
+    //then we we validate the zipcode as a string
+    //then we check if it is a 5-digit number
+    //then we check if it is in the range of 10001 to 14975
+    //then we return the zipcode
+    if (zipcode === undefined || zipcode === null) {
+      throw `zipcode cannot be undefined or null`;
+    }
+    zipcode = string_validation(zipcode, 'zipcode')
+    if (!/^\d{5}$/.test(zipcode)) {
+        throw `zipcode must be a 5-digit number`;
+      }
+      const zip_num = Number(zipcode);
+      if (zip_num < 10001 || zip_num > 14975) {
+        throw `zipcode must be a valid New York ZIP code (10001–14975)`;
+      }
+    
+      return zipcode;
+}
+
+export const score_validation = (score) => {
+    //first we check if the score is undefined or null
+    //then we check if the score is of type number
+    //then we check if the score is greater than 0
+    //then we check if the score is less than 100
+    //then we return the score
+    if (score === undefined || score === null) {
+      throw `score cannot be undefined or null`;
+    }
+    if (typeof score !== 'number') {
+      throw `score must be a number`;
+    }
+    if (score < 0 || score > 100) {
+      throw `score must be between 0 and 100`;
+    }
+    return score;
+}
+
+export const grade_validation = (grade) => {
+    //first we check if the grade is undefined or null
+    //then we check if the grade is of type string
+    //then we check if the grade is a valid grade
+    //then we return the grade
+    if (grade === undefined || grade === null) {
+      throw `grade cannot be undefined or null`;
+    }
+    grade = string_validation(grade, 'grade')
+    if (grade !== 'A' && grade !== 'B' && grade !== 'C' && grade !== 'P' && grade !== 'N' && grade !== 'Z') {
+      throw `grade must be a valid grade (A, B, C, P, N, Z)`;
+    }
+    return grade;
+}

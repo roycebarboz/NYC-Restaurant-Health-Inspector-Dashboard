@@ -10,7 +10,7 @@ import { reviews } from '../config/mongoCollections.js';
 
 const constructorMethod = (app) => {
     app.use('/restuarants', restaurantsRoutes);
-    app.use('/users', usersRoutes);
+    app.use('/', usersRoutes);
     app.use('/inspections', inspectionsRoutes);
     app.use('/reviews', reviewsRoutes);
 

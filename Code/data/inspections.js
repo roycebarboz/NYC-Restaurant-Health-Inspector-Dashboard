@@ -274,7 +274,7 @@ const validateRestaurantId = (id) => {
   return trimmed;
 };
 
-export const getByRestaurantId = async (restaurantId) => {
+export const getInspectionsByRestaurantId = async (restaurantId) => {
   const restaurantIdStr = validateRestaurantId(restaurantId);
 
   const restaurantsCol = await restaurantsCollection();

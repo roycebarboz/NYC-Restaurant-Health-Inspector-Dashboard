@@ -74,7 +74,7 @@ export const validatedArray = async (array, attribute, fetchFunction) => {
 
     return validatedIds;
 }
-
+// Royce's Validation Functions start
 export const string_validation = (str, var_name = 'input') => {
     //first we check if the string is undefined or null
     //then we check if the input is of type string
@@ -148,3 +148,5 @@ export const grade_validation = (grade) => {
     }
     return grade;
 }
+
+// Royce's Validation Functions end

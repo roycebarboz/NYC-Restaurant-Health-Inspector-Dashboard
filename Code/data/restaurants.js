@@ -3,6 +3,8 @@ import csv from 'csv-parser';
 import { ObjectId } from 'mongodb';
 import { restaurants as restaurantsCollection } from '../config/mongoCollections.js';
 import { string_validation, zipcode_validation, score_validation, grade_validation } from '../helpers.js';
+import { getInspectionsByRestaurantId } from './inspections.js';
+import { GetReviewsByRestaurantId } from './reviews.js';
 /**
  this function takes in the file path of the csv file which is a string and returns a array of object which represents each row in the csv file
  for example: results = [
@@ -356,3 +358,66 @@ export const SearchRestaurants = async (filters = {}) => {
         }
     };
 }
+
+// GetRestaurantbyID takes in the restaurant ID and returns the restaurant document along with its inspections and reviews
+// This function is used for the restaurant detail page which displays:
+// - Restaurant basic information (name, grade, address, phone, cuisine, etc.)
+// - Inspection history (all inspections for the restaurant)
+// - User reviews (all reviews for the restaurant)
+// for example: GetRestaurantbyID("1234567890") = {
+//    "restaurant": {
+//        "_id": "1234567890",
+//        "name": "Joe's Pizza",
+//        "currentGrade": "A",
+//        "averageUserRating": 4.2,
+//        "totalReviews": 9,
+//        ...
+//    },
+//    "inspections": [
+//        {
+//            "inspectionDate": "2025-03-15",
+//            "grade": "A",
+//            "score": 12,
+//            "inspectionType": "Cycle Inspection",
+//            "violations": [...]
+//        },
+//        ...
+//    ],
+//    "reviews": [
+//        {
+//            "username": "Sarah M.",
+//            "rating": 5,
+//            "title": "Amazing pizza!",
+//            "reviewText": "...",
+//            "createdAt": "2025-01-15",
+//            ...
+//        },
+//        ...
+//    ]
+// }
+export const GetRestaurantbyID = async (restaurantId) => {
+    
+    restaurantId = string_validation(restaurantId, 'restaurantId');
+
+    const restaurants_collection = await restaurantsCollection();
+    const restaurant = await restaurants_collection.findOne({ _id: restaurantId });
+
+    if (!restaurant) {
+        throw `Restaurant with id ${restaurantId} not found`
+    }
+
+    const inspections = await getInspectionsByRestaurantId(restaurantId);
+    if (!inspections) {
+        inspections = [];
+    }
+
+    const reviews = await GetReviewsByRestaurantId(restaurantId);
+    if (!reviews) {
+        reviews = [];
+    }
+    return {
+        restaurant: restaurant,
+        inspections: inspections,
+        reviews: reviews
+    };
+};

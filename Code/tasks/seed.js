@@ -6,7 +6,7 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
-import CreateRestaurant from '../data/restaurants.js';
+import { CreateRestaurant } from '../data/restaurants.js';
 import { createInspection } from '../data/inspections.js';
 import { closeConnection } from '../config/mongoConnection.js';
 

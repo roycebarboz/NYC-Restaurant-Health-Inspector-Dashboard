@@ -1,3 +1,9 @@
+<head>
+    <title>
+        Inspectify-Landing-Page
+    </title>
+</head>
+
 <body>
     <header>
         <div id="Topbar">
@@ -7,11 +13,13 @@
                 <a href="/register">Register</a>
             </nav>
         </div>
-        <div class="Search UI">
+        <div class="search-UI">
             <form id="search-bar">
                 <label for="filter">Filter</label>
                 <select name="filter" id="filter">
-                    <option value="borough">borough</option>
+                    <option value="borough">Borough</option>
+                    <option value="cuisine">Cuisine</option>
+                    <option value="grade">Grade</option>
                 </select>
                 <label for="filter_text">Search Restaurant</label>
                 <input type="text" id="filter_text" name="filter_text">
@@ -25,7 +33,9 @@
     </main>
 
     <footer>
-        <div id="base_footer"></div>
+        <div id="base_footer">
+            <p>@ 2025 Inspectify</p>
+        </div>
     </footer>
 
 </body>

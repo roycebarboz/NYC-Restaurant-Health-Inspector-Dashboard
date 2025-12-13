@@ -23,19 +23,17 @@ router
             }
         })
         .post(loginRedirect, (req,res)=>{
-            const { filter, filter_text } = req.body;
             const query = new URLSearchParams();
+            
+            if (req.body.name?.trim()){query.append("name",req.body.name.trim());}
 
-            const text = filter_text?.trim();
-
-            if (text) {
-                query.append("name", text);
+            if (req.body.filter){
+                for (const [filter,filtername] of Object.entries(req.body.filters)){ query.append(filter,filtername)}
             }
-
-            if (filter && filter != "name" && text) {
-                query.append(filter, text);
+            
+            if (query.toString() === ''){
+                res.redirect('/');
             }
-
             return res.redirect(`/restaurants/search?${query.toString()}`);
         })
 

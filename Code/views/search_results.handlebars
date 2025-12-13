@@ -1,9 +1,13 @@
 <body>
     <header>
-        <h1>Search results for Restaurant</h1>
-        <div id="search-filters">
-            {{req.query}}
-        </div>
+        <h1>Search results for 
+            {{#if filter.name}}
+                {{filter.name}} 
+            {{else}}
+                Restaurant
+            {{/if}}
+            </h1>
+        <div id="search-filters"></div>
     </header>
 
     <main>

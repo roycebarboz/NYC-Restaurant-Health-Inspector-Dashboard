@@ -8,8 +8,8 @@
         </div>
         <div class="search-UI">
             <form id="search-bar" method="POST" action="/restaurants/search">
-                <label for="filter">Filter</label>
                 <select name="filter" id="filter">
+                    <option value="">Filter</option>
                     <option value="borough">Borough</option>
                     <option value="cuisineType">Cuisine</option>
                     <option value="grade">Grade</option>
@@ -17,8 +17,16 @@
                     <option value="minScore">Min Score</option>
                     <option value="maxScore">Max Score</option>
                 </select>
-                <label for="filter_text">Search Restaurant By Name:</label>
+                
                 <input type="text" id="filter_text" name="filter_text">
+                <button type="button" name="add_button" id="add_button">Add Filter</button>
+                
+                <div id="addedFilters"></div>
+                <div id="filter-error" class="error"></div>
+                
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name">
+
                 <button type="submit" name="submit_button" id="submit_button">Search</button>
             </form>
         </div>

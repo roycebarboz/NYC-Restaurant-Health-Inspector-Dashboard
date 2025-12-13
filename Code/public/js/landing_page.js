@@ -1,4 +1,52 @@
 $(function () {
+    
+    $('#add_button').on('click', function () {
+        const filter = $('#filter').val();
+        const value = $('#filter_text').val().trim();
+        $("#filter-error").text("").hide();
+
+        if (!filter || !value) return;
+
+        if ($(`input[name="filters[${filter}]"]`).length) return;
+
+        if (filter == 'grade'){
+            if (!/^[ABCDEF]$/i.test(value)){
+                $("#filter-error").text("Grade must be A-F").show();
+                return}};
+
+        if ((filter === 'minScore' || filter === 'maxScore') && (isNaN(value)|| value > 10 || value < 0)) {
+            $("#filter-error").text("Score must be a valid number").show();
+            return;}
+        
+        if (filter === 'cuisineType' || value.trim().length==0){
+            $("#filter-error").text("Cuisine must be a valid word").show();
+            return;}
+
+        const chip = $(`
+            <div class="filter-chip">
+                ${filter}: ${value}
+                <span class="remove">✕</span>
+            </div>
+        `);
+
+        const hidden = $(`<input>`, {
+            type: 'hidden',
+            name: `filters[${filter}]`,
+            value
+        });
+
+        chip.find('.remove').on('click', function () {
+            hidden.remove();
+            chip.remove();
+        });
+
+        $('#addedFilters').append(chip);
+        $('#search-bar').append(hidden);
+
+        $('#filter').val('');
+        $('#filter_text').val('');
+        });
+
     fetch('/restaurants/featured')
     .then(res => {
         if (!res.ok) throw new Error('Failed to load featured');
@@ -9,7 +57,7 @@ $(function () {
         container.empty();
         
         if (!restaurants||restaurants.length===0){
-            const card = $('<div>').addId("landing_page_card")
+            const card = $('<div>').attr("id","landing_page_card")
 
             const img = $('<img>')
                 .attr('src', '/public/images/no_image_1.png')

@@ -9,7 +9,7 @@ import { ObjectId } from "mongodb";
 import { reviews } from '../config/mongoCollections.js';
 
 const constructorMethod = (app) => {
-    app.use('/restuarants', restaurantsRoutes);
+    app.use('/restaurants', restaurantsRoutes);
     app.use('/', usersRoutes);
     app.use('/inspections', inspectionsRoutes);
     app.use('/reviews', reviewsRoutes);

@@ -29,13 +29,6 @@ export const loginRedirect = (req, res, next) => {
     next();
 };
 
-export const signingout = (req, res, next) => {
-    const user = req.session.user;
-
-    if(!user){return res.redirect("/login");}
-    next();
-};
-
 export const sanitizeData = (req,res,next) => {
     if(req.body && typeof req.body === "object"){
         for (const key in req.body){

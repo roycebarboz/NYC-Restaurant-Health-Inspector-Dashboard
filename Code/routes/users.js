@@ -1,14 +1,14 @@
 import {Router} from 'express';
 import * as userfunc from '../data/users.js';
-import * as middlefunc from "../middleware/Auth.js"
+import {redirect,loginRedirect} from "../middleware/Auth.js"
 const router = Router();
 
 
-router.route('/').get(middlefunc.loginRedirect,async (req, res) => {
+router.route('/').get(loginRedirect,async (req, res) => {
     try{
     res.render('landing_page', 
         {
-            title:"Landing Page"
+            title:"Inspectify - Landing Page"
         });
     }
     catch(e){
@@ -18,22 +18,22 @@ router.route('/').get(middlefunc.loginRedirect,async (req, res) => {
 
 router
     .route('/login')
-    .get(middlefunc.redirect, async (req, res) => {
+    .get(redirect, async (req, res) => {
         try{
-            res.render('login',{title:"Login"});
+            res.render('login',{title:"Inspectify - Login"});
         }
         catch(e){
         res.status(500).send(e);
         }
     })
-    .post(middlefunc.redirect, async (req, res) => {
+    .post(async (req, res) => {
     let {email,password} = req.body;
 
     try{
         const loginUser = await userfunc.loginUser(email,password);
 
         req.session.user = {
-        _id : loginUser.id,
+        _id: loginUser.id,
         username : loginUser.username,
         email : loginUser.email
         }
@@ -42,7 +42,7 @@ router
     }
     catch(e){
         return res.status(400).render("login",{
-        title: 'Login',
+        title: 'Inspectify - Login',
         error: e.message,
         email
         });
@@ -51,9 +51,9 @@ router
 
 router
     .route('/register')
-    .get(middlefunc.redirect,async (req, res) => {
+    .get(redirect,async (req, res) => {
     try{
-        res.render('register',{title:"Register"});
+        res.render('register',{title:"Inspectify - Register"});
     }
     catch(e){
         res.status(500).send(e);
@@ -73,7 +73,7 @@ router
     if (result.registrationCompleted===true){return res.redirect("/login");}
     else{
         return res.status(500).render("register",{
-            title: "Register",
+            title: "Inspectify - Register",
             error: "Internal Server Error",
             ...req.body
             });
@@ -81,23 +81,24 @@ router
     }
     catch(e){
         return res.status(400).render('register',{
-            title:'Register',
+            title:'Inspectify - Register',
             error:e.message,
             ...req.body
             });
         }
     });
 
-router.route('/user_profile').get(middlefunc.loginRedirect, async (req, res) => {
+router.route('/user_profile').get(loginRedirect, async (req, res) => {
     try{
-    res.render('user_profile',{title:"User"});
+    const user = res.locals.user;
+    res.render('user_profile',{title:`Inspectify - ${user.username} Profile`});
     }
     catch(e){
     res.status(500).send(e);
     }
 });
 
-router.route('/signout').get(middlefunc.signingout, (req, res) => {
+router.route('/signout').get(loginRedirect, (req, res) => {
     req.session.destroy(() => {
     res.redirect('/login')
     });

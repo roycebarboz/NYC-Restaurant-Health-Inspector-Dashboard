@@ -7,9 +7,8 @@
 <body>
     <main>
         <form id="signin-form" method="POST" action="/login">
-            {{#if error}}
-            <p class="error" id="signin-error">{{error}}</p>
-            {{/if}}
+            <p class="error" id="signin-error">{{#if error}}{{error}}{{/if}}</p>
+            
             <label for="email">Email:</label>
             <input type="text" id="email" name="email">
             <label for="password">Password:</label>

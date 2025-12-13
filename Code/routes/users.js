@@ -6,11 +6,9 @@ const router = Router();
 
 router.route('/').get(middlefunc.loginRedirect,async (req, res) => {
     try{
-    const user = req.session.user || null;
     res.render('landing_page', 
         {
-            title:"Landing Page",
-            user
+            title:"Landing Page"
         });
     }
     catch(e){
@@ -28,20 +26,16 @@ router
         res.status(500).send(e);
         }
     })
-    .post(async (req, res) => {
+    .post(middlefunc.redirect, async (req, res) => {
     let {email,password} = req.body;
 
     try{
         const loginUser = await userfunc.loginUser(email,password);
 
         req.session.user = {
+        _id : loginUser.id,
         username : loginUser.username,
-        email : loginUser.email,
-        profile: loginUser.profile,
-        reviewIds:loginUser.reviewIds,
-        favoriteRestaurantIds:loginUser.favoriteRestaurantIds,
-        createdAt: loginUser.createdAt,
-        lastLogin: loginUser.lastLogin
+        email : loginUser.email
         }
 
         return res.redirect("/")
@@ -105,9 +99,7 @@ router.route('/user_profile').get(middlefunc.loginRedirect, async (req, res) => 
 
 router.route('/signout').get(middlefunc.signingout, (req, res) => {
     req.session.destroy(() => {
-    res.render("signout",{
-        title:"Signed Out"
-        });
+    res.redirect('/login')
     });
 });
 

@@ -26,8 +26,12 @@ signupform.addEventListener('submit', (event) => {
     
     let check = true;
 
-    if (username.length < 2 || username.length > 20 || !/^[A-Za-z]+$/.test(username)) {
+    if (username.length < 2 || username.length > 20) {
         updateError("username-error", "UserName must be 2-20 letters");
+        check = false;
+    }
+    if (!/^[A-Za-z]+$/.test(username)){
+        updateError("username-error", "UserName can only have letters");
         check = false;
     }
 
@@ -110,7 +114,7 @@ signinform.addEventListener('submit', (event) => {
 
     let check = true;
     if (email.length < 2 || email.length > 20 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        updateError("email-error", "Email has to be valid email");
+        updateError("signin-error", "Email has to be valid email");
         check = false;
     }
     

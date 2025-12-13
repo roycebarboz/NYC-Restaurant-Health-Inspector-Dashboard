@@ -1,0 +1,30 @@
+<head>
+    <title>
+        Inspectify-{{restaurant.name}}
+    </title>
+</head>
+
+<body>
+    <header>
+        <button>Back</button>
+        <h2>Restaurant Detail Page</h2>
+    </header>
+    <main>
+        <div id="Restaurant-Main">
+            <h1>{{Restaurant.name}}</h1>
+            <p>Grade: {{Restaurant.grade}}</p>
+            <div>
+                <span id="rating-stars"></span>
+                <span>{{restaurant.avgRating}}/5 {{restaurant.reviewCount}}/5</span>
+            </div>
+            <p>Address: {{restaurant.address}}</p>
+            <p>Phone: {{restaurant.number}}</p>
+            <p>Cuisine:{{restaurant.cuisine}}</p>
+            <button id="FavouriteButton">Add to Favorites</button>
+            <a id="writeReview" href="/review_writing">Click here to signup!</a>
+            <div id="inspection-timeline"></div>
+            <div id="reviews-box"></div>
+            <button id="writeReviw">Write Review</button> 
+        </div>
+    </main>
+</body>

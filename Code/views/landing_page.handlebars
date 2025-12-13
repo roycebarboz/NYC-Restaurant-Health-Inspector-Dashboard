@@ -1,4 +1,31 @@
 <body>
-    <p> yer logged in!</p>
-    <a id="signoutLink" href="/login">Sign out</a>
+    <header>
+        <div id="Topbar">
+            <h1>Inspectify</h1>
+            <nav class="links">
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </nav>
+        </div>
+        <div class="Search UI">
+            <form id="search-bar">
+                <label for="filter">Filter</label>
+                <select name="filter" id="filter">
+                    <option value="borough">borough</option>
+                </select>
+                <label for="filter_text">Search Restaurant</label>
+                <input type="text" id="filter_text" name="filter_text">
+                <button type="submit" name="submit_button" id="submit_button">Search</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        <div id="landing_page_images"></div>
+    </main>
+
+    <footer>
+        <div id="base_footer"></div>
+    </footer>
+
 </body>

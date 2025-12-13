@@ -1,7 +1,9 @@
 <body>
     <header>
         <h1>Search results for Restaurant</h1>
-        <div id="search-filters"></div>
+        <div id="search-filters">
+            {{req.query}}
+        </div>
     </header>
 
     <main>
@@ -11,6 +13,13 @@
 		<span id="page-buttons"></span>
 		<a href="#" id="next">Next</a> 
 		<p id="page-numbers"> </p> 
-	</div> 
+	    </div> 
     </main>
+    <footer>
+        <div id="base_footer">
+            <p>@ 2025 Inspectify</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/public/js/search_results.js"></script>
 </body>

@@ -39,13 +39,37 @@ router
             return res.redirect(`/restaurants/search?${query.toString()}`);
         })
 
-    .route('/featured').get(loginRedirect, async(req,res) => {
+router
+    .route('/featured').get(async(req,res) => {
+        /*
+        //test code
+        return res.json([
+        {
+        _id: 'mock1',
+        name: 'Test Restaurant A',
+        image: '/public/images/no_image_1.png'
+        },
+        {
+        _id: 'mock2',
+        name: 'Test Restaurant B',
+        image: '/public/images/no_image_1.png'
+        },
+        {
+        _id: 'mock3',
+        name: 'Test Restaurant C',
+        image: '/public/images/no_image_1.png'
+        }
+    ]);*/
         try{
-            let featured = await restaurants.SearchRestaurants({grade:'A'});
-            featured = featured[pagination{restaurants_per_page:3,page:1}];
+            const results = await restaurants.SearchRestaurants({
+            grade: 'A',
+            restaurant_per_page: 3,
+            page: 1
+            });
+            res.json(results.restaurants);
         }
         catch(e){
-            res.status(500).json({ error: 'Failed to load featured restaurants' });
+            res.status(500).json({ error: 'Failed to load featured restaurants'});
         }
     })
 

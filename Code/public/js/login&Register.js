@@ -10,18 +10,17 @@ function updateError(id, message){
     if (errorbox) {errorbox.textContent = message};
 }
 
-if(signupform){
-signupform.addEventListener('submit', (event) => {
+$('#signupform').on('submit', function(event){
     event.preventDefault();
     clearError();
 
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value;
-    const dateOfBirth = document.getElementById("dateOfBirth").value;
+    const username = $("#username").value.trim();
+    const email = $("#email").value.trim();
+    const password = $("#password").value.trim();
+    const confirmPassword = $("#confirmPassword").value.trim();
+    const firstName = $("#firstName").value.trim();
+    const lastName = $("#lastName").value;
+    const dateOfBirth = $("#dateOfBirth").value;
     
     
     let check = true;
@@ -102,15 +101,14 @@ signupform.addEventListener('submit', (event) => {
 
     if(check){signupform.submit();}
 });
-}
 
-if(signinform){
-signinform.addEventListener('submit', (event) => {
+
+$('#signinform').on('submit', function(event) {
     event.preventDefault();
     clearError();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = $("#email").value.trim();
+    const password = $("#password").value.trim();
 
     let check = true;
     if (email.length < 2 || email.length > 20 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -129,5 +127,5 @@ signinform.addEventListener('submit', (event) => {
     }
 
     if (check) {signinform.submit();}
-    });
-}
+});
+

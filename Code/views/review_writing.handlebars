@@ -11,18 +11,22 @@
     <main>
         <form id="reviewForm" method="POST">
             <label for="rating">Rating:</label>
-            <select name="rating" id="rating" required>
-            <option value="">Choose rating</option>
-            <option value="5">5 - Excellent</option>
-            <option value="4">4 - Good</option>
-            <option value="3">3 - Okay</option>
-            <option value="2">2 - Poor</option>
-            <option value="1">1 - Bad</option>
-        </select>
+            <div class="star-rating">
+                <input type="radio" name="rating" id="star5" value="5" required>
+                <label for="star5">★</label>
+                <input type="radio" name="rating" id="star4" value="4">
+                <label for="star4">★</label>
+                <input type="radio" name="rating" id="star3" value="3">
+                <label for="star3">★</label>
+                <input type="radio" name="rating" id="star2" value="2">
+                <label for="star2">★</label>
+                <input type="radio" name="rating" id="star1" value="1">
+                <label for="star1">★</label>
+            </div>
             <label for="Review-Title">Title:</label>
             <input type="text" name="Review-Title" id="Review-Title" required>
-            <label for="Review-text">Review:</label>
-            <input type="text" name="Review-Title" id="Review-Title" required>
+            <label for="Review-Body">Review:</label>
+            <textarea name="Review-Body" id="Review-Body" required></textarea>
             <button type="submit">Submit</button>
         </form>
     </main>

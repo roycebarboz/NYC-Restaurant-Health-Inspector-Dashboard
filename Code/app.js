@@ -15,18 +15,55 @@ app.use(
   })
 );
 
-const staticDir = express.static('public');
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+})
+
+app.use('/public', express.static('public'));
 
 const handlebarsInstance = exphbs.create({
   defaultLayout: 'main',
   partialsDir: ['views/partials/'],
-  // Specify helpers which are only registered on this instance.
   helpers: {
-    equals: (a, b) => a === b
+    equals: (a, b) => a === b,
+    removeFilter: (filter, removeKey) => {
+      const params = new URLSearchParams(filter)
+      params.delete(removeKey);
+      params.delete('page');
+      return params.toString();
+    },
+    calculateAge: (dateOfBirth) => {
+      if (!dateOfBirth) return '';
+      const [year, month, day] = dateOfBirth.split('-').map(Number);
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    },
+    renderStars: (rating) => {
+      if (!rating || rating === 0) return '☆☆☆☆☆';
+      const fullStars = Math.floor(rating);
+      let stars = '';
+      for (let i = 0; i < fullStars; i++) stars += '⭐';
+      while (stars.length < 5) stars += '☆';
+      return stars;
+    },
+    countReviewsByRating: (reviews, rating) => {
+      if (!reviews || !Array.isArray(reviews)) return 0;
+      return reviews.filter(r => r.rating === rating).length;
+    },
+    getStarCount: (starBreakdown, rating) => {
+      if (!starBreakdown) return 0;
+      return starBreakdown[rating] || 0;
+    }
   }
 });
 
-app.use('/public', staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

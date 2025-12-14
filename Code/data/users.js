@@ -98,6 +98,7 @@ export const loginUser = async(email,password) => {
     );
 
     return {
+        _id: potentialUser._id,
         username:potentialUser.username,
         email:potentialUser.email,
         profile:potentialUser.profile,

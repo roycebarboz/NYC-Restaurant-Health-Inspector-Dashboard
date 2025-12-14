@@ -1,0 +1,20 @@
+<div class="restaurant-card">
+    <h1>{{this.name}}</h1>
+
+    <p>
+        <strong>Cuisine:</strong> {{this.cuisineType}}<br>
+        <strong>Borough:</strong> {{this.borough}}
+    </p>
+
+    <p>
+        Grade:
+        <span class="grade-{{this.currentGrade}}">
+            {{this.currentGrade}}
+        </span>
+        (Score: {{this.currentScore}})
+    </p>
+
+    <a href="/restaurants/{{this._id}}">
+        View Details
+    </a>
+</div>

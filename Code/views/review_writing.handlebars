@@ -1,0 +1,37 @@
+<header>
+    <div class="nav-links">
+        <a href="/restaurants/{{restaurantId}}" id="Back_link">Return to Restaurant Page</a> | <a
+            href="/user_profile">Profile</a>
+    </div>
+    <h2>Review Writing Form</h2>
+</header>
+<main>
+    <form id="reviewForm" method="POST" action="/reviews">
+        <input type="hidden" name="restaurantId" value="{{restaurantId}}">
+        <label>Rating:</label>
+        <div class="Review-star-rating">
+            <input type="radio" name="rating" id="star5" value="5" required>
+            <label for="star5">5★</label>
+            <input type="radio" name="rating" id="star4" value="4">
+            <label for="star4">4★</label>
+            <input type="radio" name="rating" id="star3" value="3">
+            <label for="star3">3★</label>
+            <input type="radio" name="rating" id="star2" value="2">
+            <label for="star2">2★</label>
+            <input type="radio" name="rating" id="star1" value="1">
+            <label for="star1">1★</label>
+        </div>
+        <label for="Review-Title">Title:</label>
+        <input type="text" name="title" id="Review-Title" required>
+        <span class="error" id="Review-Title-error"></span>
+        <label for="Review-Body">Review:</label>
+        <textarea name="reviewText" id="Review-Body" required></textarea>
+        <span class="error" id="Review-Body-error"></span>
+        <label for="Review-visitDate">Visit Date:</label>
+        <input type="date" name="visitDate" id="Review-visitDate">
+        <span class="error" id="Review-visitDate-error"></span>
+        <button type="submit">Submit</button>
+    </form>
+</main>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="/public/js/review_writing.js"></script>

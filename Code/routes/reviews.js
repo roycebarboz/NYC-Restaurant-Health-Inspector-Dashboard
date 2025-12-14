@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { loginRedirect } from "../middleware/Auth.js"
 import {
   CreateReview,
   GetReviewsByRestaurantId,
@@ -30,30 +31,47 @@ const validateId = (id, varName = 'id') => {
  *  - reviewText
  *  - visitDate
  */
-router.post('/', async (req, res) => {
+
+router.get('/new/:restaurantId', loginRedirect, (req, res) => {
+    res.render('review_writing', {
+    title: 'Inspectify - Write Review',
+    restaurantId: req.params.restaurantId
+  });
+});
+
+
+
+router.post('/', loginRedirect, async (req, res) => {
   try {
     const {
       restaurantId,
-      userId,
       rating,
       title,
       reviewText,
       visitDate
     } = req.body;
 
+    const userId = req.session.user._id;
+    const username = req.session.user.username;
+
     const newReview = await CreateReview({
       restaurantId,
       userId,
+      username,
       rating,
       title,
       reviewText,
       visitDate
     });
 
-    return res.status(201).json(newReview);
+    return res.redirect(`/restaurants/${restaurantId}`);
   } catch (e) {
     console.error('Error in POST /reviews:', e);
-    return res.status(400).json({ error: e.toString() });
+    return res.status(400).render('review_writing', {
+      title: 'Inspectify - Write Review',
+      error: e.toString(),
+      restaurantId: req.body.restaurantId
+    });
   }
 });
 
@@ -126,10 +144,13 @@ router.get('/:reviewId', async (req, res) => {
  *  - reviewText
  *  - visitDate
  */
-router.put('/:reviewId', async (req, res) => {
+router.put('/:reviewId', loginRedirect, async (req, res) => {
   try {
     const reviewId = validateId(req.params.reviewId, 'reviewId');
-
+    const review = await GetbyReviewID(reviewId);
+    if (review.userId !== req.session.user._id) {
+      return res.status(405).json({ error: 'Unauthorized' });
+    }
     const {
       rating,
       title,
@@ -159,10 +180,13 @@ router.put('/:reviewId', async (req, res) => {
 /**
  * DELETE /reviews/:reviewId
  */
-router.delete('/:reviewId', async (req, res) => {
+router.delete('/:reviewId', loginRedirect, async (req, res) => {
   try {
     const reviewId = validateId(req.params.reviewId, 'reviewId');
-
+    const review = await GetbyReviewID(reviewId);
+    if (review.userId !== req.session.user._id) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
     const deletedReview = await DeleteReview(reviewId);
 
     return res.json({

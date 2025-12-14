@@ -1,0 +1,19 @@
+<header>
+    <div class="nav-links">
+        <a href="/">Home</a> | <a href="/user_profile">Profile</a>
+    </div>
+    <h1>My Favorites</h1>
+</header>
+
+<main>
+    <div id="restaurant-cards">
+        {{#if favoriteRestaurants.length}}
+        {{#each favoriteRestaurants}}
+        {{> restaurant_item}}
+        {{/each}}
+        {{else}}
+        <p>No favorite restaurants yet.</p>
+        <p><a href="/">Browse restaurants to add favorites</a></p>
+        {{/if}}
+    </div>
+</main>

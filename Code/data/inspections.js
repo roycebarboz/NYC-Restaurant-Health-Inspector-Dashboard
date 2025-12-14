@@ -274,6 +274,18 @@ const validateRestaurantId = (id) => {
   return trimmed;
 };
 
+const validateInspectionId = (id) => {
+  if (typeof id !== 'string') {
+    throw new Error('inspectionId must be a string');
+  }
+  const trimmed = id.trim();
+  if (!trimmed) {
+    throw new Error('inspectionId cannot be an empty string or just spaces');
+  }
+  return trimmed;
+};
+
+
 export const getInspectionsByRestaurantId = async (restaurantId) => {
   const restaurantIdStr = validateRestaurantId(restaurantId);
 
@@ -293,3 +305,60 @@ export const getInspectionsByRestaurantId = async (restaurantId) => {
 
   return inspectionList;
 };
+
+export const getAllInspections = async (page = 1, limit = 50) => {
+  let pageNum = parseInt(page, 10);
+  let limitNum = parseInt(limit, 10);
+
+  if (!Number.isInteger(pageNum) || pageNum <= 0) pageNum = 1;
+  if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) limitNum = 50;
+
+  const skip = (pageNum - 1) * limitNum;
+
+  const inspectionsCol = await inspectionsCollection();
+
+  const [items, total] = await Promise.all([
+    inspectionsCol
+      .find({})
+      .sort({ inspectionDate: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .toArray(),
+    inspectionsCol.countDocuments()
+  ]);
+
+  return {
+    page: pageNum,
+    limit: limitNum,
+    total,
+    data: items
+  };
+};
+
+export const getInspectionWithRestaurant = async (inspectionId) => {
+  const inspectionIdStr = validateInspectionId(inspectionId);
+
+  const inspectionsCol = await inspectionsCollection();
+  const inspection = await inspectionsCol.findOne({ _id: inspectionIdStr });
+
+  if (!inspection) {
+    throw new Error(`Inspection with id ${inspectionIdStr} not found`);
+  }
+
+  const restaurantsCol = await restaurantsCollection();
+  const restaurant = await restaurantsCol.findOne({
+    _id: inspection.restaurantId
+  });
+
+  if (!restaurant) {
+    throw new Error(
+      `Restaurant with id ${inspection.restaurantId} not found`
+    );
+  }
+
+  return {
+    inspection,
+    restaurant
+  };
+};
+

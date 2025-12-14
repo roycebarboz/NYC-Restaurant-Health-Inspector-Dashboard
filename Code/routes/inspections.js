@@ -1,8 +1,13 @@
-import {Router} from 'express';
-import { loginRedirect } from "../middleware/Auth.js"
-import { getInspectionsByRestaurantId } from '../data/inspections.js';
-import { inspections as inspectionsCollection, restaurants } from '../config/mongoCollections.js';
+import { Router } from 'express';
+import { loginRedirect } from '../middleware/Auth.js';
+import {
+  getInspectionsByRestaurantId,
+  getAllInspections,
+  getInspectionWithRestaurant
+} from '../data/inspections.js';
+
 const router = Router();
+
 
 const validateId = (id, varName = 'id') => {
   if (typeof id !== 'string') {
@@ -18,43 +23,21 @@ const validateId = (id, varName = 'id') => {
 /**
  * GET /inspections
  *  paginated list of all inspections
- *  defailt: page=1, limit=50
+ *  default: page=1, limit=50
  */
 router.get('/', loginRedirect, async (req, res) => {
   try {
-    const inspectionsCol = await inspectionsCollection();
+    const { page, limit } = req.query;
 
-    let { page, limit } = req.query;
+    const result = await getAllInspections(page, limit);
 
-    page = parseInt(page, 10);
-    limit = parseInt(limit, 10);
-
-    if (!Number.isInteger(page) || page <= 0) page = 1;
-    if (!Number.isInteger(limit) || limit <= 0 || limit > 100) limit = 50;
-
-    const skip = (page - 1) * limit;
-
-    const [items, total] = await Promise.all([
-      inspectionsCol
-        .find({})
-        .sort({ inspectionDate: -1, createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .toArray(),
-      inspectionsCol.countDocuments()
-    ]);
-
-    return res.json({
-      page,
-      limit,
-      total,
-      data: items
-    });
+    return res.json(result);
   } catch (e) {
     console.error('Error in GET /inspections:', e);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 /**
  * GET /inspections/restaurant/:restaurantId
@@ -83,43 +66,33 @@ router.get('/restaurant/:restaurantId', async (req, res) => {
  * GET /inspections/:inspectionId
  */
 router.get('/:inspectionId', loginRedirect, async (req, res) => {
-  try{
+  try {
     const inspectionId = validateId(req.params.inspectionId, 'inspectionId');
 
-    const inspectionsCol = await inspectionsCollection();
-    const inspection = await inspectionsCol.findOne({ _id: inspectionId });
+    const { inspection, restaurant } = await getInspectionWithRestaurant(inspectionId);
 
-
-    if (!inspection) {
-      return res
-        .status(404)
-        .json({ error: `Inspection with id ${inspectionId} not found` });
-    }
-
-    const restaurantsCol = await restaurants();
-    const restaurant = await restaurantsCol.findOne({
-      _id: inspection.restaurantId
-    });
-
-    if (!restaurant) {
-      return res
-        .status(404)
-        .json({ error: `Restaurant with id ${restaurant._id} not found` });
-    }
-
-    return res.render('inspection_detail',{
-      title: "Inspectify - Inspection Detail",
+    return res.render('inspection_detail', {
+      title: 'Inspectify - Inspection Detail',
       inspection,
       restaurant
     });
   } catch (e) {
     console.error('Error in GET /inspections/:inspectionId:', e);
     const msg = e.toString();
-    return res.status(400).json({ error: {
+
+    if (msg.toLowerCase().includes('not found')) {
+      return res.status(404).render('error', {
+        title: 'Inspectify - Error',
+        error: msg
+      });
+    }
+
+    return res.status(400).render('error', {
       title: 'Inspectify - Error',
       error: msg
-    }});
+    });
   }
 });
+
 
 export default router;

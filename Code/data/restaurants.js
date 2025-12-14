@@ -396,7 +396,7 @@ export const SearchRestaurants = async (filters = {}) => {
 //    ]
 // }
 export const GetRestaurantbyID = async (restaurantId) => {
-    
+
     restaurantId = string_validation(restaurantId, 'restaurantId');
 
     const restaurants_collection = await restaurantsCollection();

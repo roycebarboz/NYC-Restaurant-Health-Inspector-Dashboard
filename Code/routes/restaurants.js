@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { loginRedirect } from "../middleware/Auth.js"
 import * as restaurants from "../data/restaurants.js"
+import * as userfunc from '../data/users.js';
 const router = Router();
 
 router
@@ -74,22 +75,47 @@ router
 router
     .route('/:id')
     .get(loginRedirect, async (req, res) => {
-    try {
-        const restaurantId = req.params.id;
-        const result = await restaurants.GetRestaurantbyID(restaurantId);
+        try {
+            const restaurantId = req.params.id;
+            const result = await restaurants.GetRestaurantbyID(restaurantId);
 
-        res.render('restaurant_detail', {
-            title: `Inspectify - ${result.restaurant.name}`,
-            restaurant: result.restaurant,
-            inspections: result.inspections,
-            reviews: result.reviews
-        });
-    } catch (error) {
-        res.status(404).render('error', {
-            title: 'Inspectify - Restaurant Not Found',
-            error: error.toString()
-        });
-    }
-});
+            let isFavorite = false;
+            if (res.locals.user) {
+                try {
+                    const fullUser = await userfunc.GetUserbyID(res.locals.user._id);
+                    if (fullUser.favoriteRestaurantIds && fullUser.favoriteRestaurantIds.length > 0) {
+                        const favoriteIds = fullUser.favoriteRestaurantIds.map(id =>
+                            typeof id === 'object' ? id.toString() : id.toString()
+                        );
+                        isFavorite = favoriteIds.includes(restaurantId);
+                    }
+                } catch (error) {
+                    console.error('Error checking favorites:', error);
+                }
+            }
+
+            const starBreakdown = {
+                5: result.reviews.filter(r => r.rating === 5).length,
+                4: result.reviews.filter(r => r.rating === 4).length,
+                3: result.reviews.filter(r => r.rating === 3).length,
+                2: result.reviews.filter(r => r.rating === 2).length,
+                1: result.reviews.filter(r => r.rating === 1).length
+            };
+
+            res.render('restaurant_detail', {
+                title: `Inspectify - ${result.restaurant.name}`,
+                restaurant: result.restaurant,
+                inspections: result.inspections,
+                reviews: result.reviews,
+                isFavorite: isFavorite,
+                starBreakdown: starBreakdown
+            });
+        } catch (error) {
+            res.status(404).render('error', {
+                title: 'Inspectify - Restaurant Not Found',
+                error: error.toString()
+            });
+        }
+    });
 
 export default router;

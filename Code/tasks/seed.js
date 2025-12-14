@@ -43,15 +43,16 @@ const seed = async () => {
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    seed()
-        .then(() => {
+    (async () => {
+        try {
+            await seed();
             console.log('\nSeed completed successfully');
             process.exit(0);
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error('\nSeed failed:', error);
             process.exit(1);
-        });
+        }
+    })();
 }
 
 export default seed;

@@ -267,31 +267,26 @@ export const SearchRestaurants = async (filters = {}) => {
     const restaurants_collection = await restaurantsCollection();
     const res_search_query = {};
 
-    // Validate and add name filter if provided
     if (filters.name !== undefined && filters.name !== null) {
         const validated_name = string_validation(filters.name, 'name');
         res_search_query.name = { $regex: validated_name, $options: 'i' };
     }
 
-    // Validate and add borough filter if provided
     if (filters.borough !== undefined && filters.borough !== null) {
         const validated_borough = string_validation(filters.borough, 'borough');
         res_search_query.borough = validated_borough;
     }
 
-    // Validate and add cuisineType filter if provided
     if (filters.cuisineType !== undefined && filters.cuisineType !== null) {
         const validated_cuisineType = string_validation(filters.cuisineType, 'cuisineType');
         res_search_query.cuisineType = { $regex: validated_cuisineType, $options: 'i' };
     }
 
-    // Validate and add zipcode filter if provided
     if (filters.zipcode !== undefined && filters.zipcode !== null) {
         const validated_zipcode = zipcode_validation(filters.zipcode);
         res_search_query.zipcode = validated_zipcode;
     }
 
-    // Validate and add score range filters if provided
     let validated_min_score;
     if (filters.minScore !== undefined && filters.minScore !== null) {
         validated_min_score = score_validation(filters.minScore);
@@ -302,7 +297,6 @@ export const SearchRestaurants = async (filters = {}) => {
         validated_max_score = score_validation(filters.maxScore);
     }
 
-    // Build score range query if either min or max is provided
     if (validated_min_score !== undefined || validated_max_score !== undefined) {
         res_search_query.currentScore = {};
         if (validated_min_score !== undefined) {
@@ -313,7 +307,6 @@ export const SearchRestaurants = async (filters = {}) => {
         }
     }
 
-    // Validate and add grade filter if provided
     if (filters.grade !== undefined && filters.grade !== null) {
         const validated_grade = grade_validation(filters.grade);
         res_search_query.currentGrade = validated_grade;
@@ -406,12 +399,19 @@ export const GetRestaurantbyID = async (restaurantId) => {
         throw `Restaurant with id ${restaurantId} not found`
     }
 
-    const inspections = await getInspectionsByRestaurantId(restaurantId);
+    if (restaurant.averageUserRating === undefined) {
+        restaurant.averageUserRating = 0;
+    }
+    if (restaurant.totalReviews === undefined) {
+        restaurant.totalReviews = 0;
+    }
+
+    let inspections = await getInspectionsByRestaurantId(restaurantId);
     if (!inspections) {
         inspections = [];
     }
 
-    const reviews = await GetReviewsByRestaurantId(restaurantId);
+    let reviews = await GetReviewsByRestaurantId(restaurantId);
     if (!reviews) {
         reviews = [];
     }

@@ -1,7 +1,7 @@
 # NYC-Restaurant-Health-Inspector-Dashboard
 This platform will help residents and visitors make informed dining decisions based on both official health inspection data and community reviews
 
-#Group Members names and their GitHub handle
+# Group Members names and their GitHub handle
 1. Royce Barboz - @roycebarboz
 2. Amaan Rajguru - @Dawnday
 3. Chenxin Zhang - @CarolNinge

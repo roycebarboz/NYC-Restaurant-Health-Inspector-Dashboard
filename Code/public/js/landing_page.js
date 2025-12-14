@@ -18,7 +18,7 @@ $(function () {
             $("#filter-error").text("Score must be a valid number").show();
             return;}
         
-        if (filter === 'cuisineType' || value.trim().length==0){
+        if (filter === 'cuisineType' && value.trim().length==0){
             $("#filter-error").text("Cuisine must be a valid word").show();
             return;}
 

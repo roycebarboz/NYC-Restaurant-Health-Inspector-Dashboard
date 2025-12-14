@@ -27,7 +27,13 @@ const handlebarsInstance = exphbs.create({
   defaultLayout: 'main',
   partialsDir: ['views/partials/'],
   helpers: {
-    equals: (a, b) => a === b
+    equals: (a, b) => a === b,
+    removeFilter: (filter, removeKey) => {
+      const params= new URLSearchParams(filter)
+      params.delete(removeKey);
+      params.delete('page');
+      return params.toString();
+    }
   }
 });
 

@@ -8,12 +8,25 @@ router
         .get(loginRedirect, async(req,res)=>{
             try{
                 const results = await restaurants.SearchRestaurants(req.query);
+                const {page,totalPages} = results.pagination;
+
+                const basefilters = new URLSearchParams(req.query);
+                basefilters.delete('page');
+
+                const URL = (p) => {
+                    const params = new URLSearchParams(basefilters);
+                    params.set('page',String(p));
+                    return `/restaurants/search?${params.toString()}`;
+                };
 
                 res.render('search_results',{
                     title: "Inspectify - Search Results",
                     restaurants: results.restaurants,
                     pagination: results.pagination,
-                    filter: req.query
+                    filter: req.query,
+                    pagination: results.pagination,
+                    prevUrl: page > 1 ? URL(page - 1) : null,
+                    nextUrl: page < totalPages ? URL(page + 1) : null
                 });
             }catch(e){
                 res.status(400).render('search_results', {
@@ -24,11 +37,13 @@ router
         })
         .post(loginRedirect, (req,res)=>{
             const query = new URLSearchParams();
+            const name = req.body.name;
+            const filters = req.body.filters ?? {};
             
-            if (req.body.name?.trim()){query.append("name",req.body.name.trim());}
+            if (name?.trim()){query.append("name",name.trim());}
 
-            if (req.body.filter){
-                for (const [filter,filtername] of Object.entries(req.body.filters)){ query.append(filter,filtername)}
+            if (filters){
+                for (const [filter,filtername] of Object.entries(filters)){ query.append(filter,filtername)}
             }
             
             if (query.toString() === ''){

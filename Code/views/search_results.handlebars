@@ -1,0 +1,57 @@
+<body>
+    <header>
+        <a href="/">To Home</a>
+        <h1>Search results for 
+            {{#if filter.name}}
+                {{filter.name}} 
+            {{else}}
+                Restaurant
+            {{/if}}
+            </h1>
+        <div id="search-filters">
+            {{#unless (equals @key "page")}}
+                <div class="filter-chip">
+                {{@key}}: {{this}}
+                <a href="/restaurants/search?{{removeFilter ../filter @key}}" class="remove"> X </a>
+                </div>
+            {{/each}}
+        </div>
+    </header>
+
+    <main>
+        <div id="restaurant-cards">
+            {{#if restaurants.length}}
+                {{#each restaurants}}
+                    {{> restaurant_item}}
+                {{/each}}
+            {{else}}
+                <p>No restaurants found.</p>
+            {{/if}}
+        </div>
+
+        <div class="pagination" id="pagination"> 
+        {{#if prevUrl}}
+            <a href="{{prevUrl}}" id="prev">Previous</a> 
+        {{else}}
+            <span class="hidden">Previous</span>
+        {{/if}}
+
+        <span class="page-indicator">
+        Page {{pagination.page}} of {{pagination.totalPages}}
+        </span>
+
+        {{#if nextUrl}}
+		    <a href="{{nextUrl}}" id="next">Next</a> 
+	    {{else}}
+            <span class="hidden">Next</span>
+        {{/if}}
+        </div> 
+    </main>
+    <footer>
+        <div id="base_footer">
+            <p>@ 2025 Inspectify</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/public/js/search_results.js"></script>
+</body>

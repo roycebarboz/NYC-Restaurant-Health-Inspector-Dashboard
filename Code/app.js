@@ -15,18 +15,28 @@ app.use(
   })
 );
 
+app.use((req,res,next) =>{
+  res.locals.user = req.session.user || null;
+  next();
+})
+
 const staticDir = express.static('public');
+app.use('/public', staticDir);
 
 const handlebarsInstance = exphbs.create({
   defaultLayout: 'main',
   partialsDir: ['views/partials/'],
-  // Specify helpers which are only registered on this instance.
   helpers: {
-    equals: (a, b) => a === b
+    equals: (a, b) => a === b,
+    removeFilter: (filter, removeKey) => {
+      const params= new URLSearchParams(filter)
+      params.delete(removeKey);
+      params.delete('page');
+      return params.toString();
+    }
   }
 });
 
-app.use('/public', staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

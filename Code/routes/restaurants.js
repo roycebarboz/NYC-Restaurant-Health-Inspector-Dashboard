@@ -1,41 +1,70 @@
 import { Router } from 'express';
-import { SearchRestaurants, GetRestaurantbyID } from '../data/restaurants.js';
+import { loginRedirect } from "../middleware/Auth.js"
+import * as restaurants from "../data/restaurants.js"
 const router = Router();
 
-//GET /restaurants/search
-//first we write a object to store the filters to put in mongoDB query
-//then we put the filters in the the SearchRestaurants function
-//throw an error if the filters are not valid
-//return the results
-router.get('/search', async (req, res) => {
-    try {
-        const filters = {
-            name: req.query.name,
-            borough: req.query.borough,
-            cuisineType: req.query.cuisineType,
-            grade: req.query.grade,
-            zipcode: req.query.zipcode,
-            minScore: req.query.minScore ? parseInt(req.query.minScore) : undefined,
-            maxScore: req.query.maxScore ? parseInt(req.query.maxScore) : undefined,
-            page: req.query.page,
-            restaurant_per_page: req.query.restaurant_per_page
-        };
+router
+    .route('/search')
+    .get(loginRedirect, async (req, res) => {
+        try {
+            const results = await restaurants.SearchRestaurants(req.query);
+            const { page, totalPages } = results.pagination;
 
-        const result = await SearchRestaurants(filters);
+            const basefilters = new URLSearchParams(req.query);
+            basefilters.delete('page');
 
-        res.render('search_results', {
-            title: 'Search Results',
-            restaurants: result.restaurants,
-            pagination: result.pagination,
-            filters: filters
-        });
-    } catch (error) {
-        res.status(400).render('error', {
-            title: 'Search Error',
-            error: error.toString()
-        });
-    }
-});
+            const URL = (p) => {
+                const params = new URLSearchParams(basefilters);
+                params.set('page', String(p));
+                return `/restaurants/search?${params.toString()}`;
+            };
+
+            res.render('search_results', {
+                title: "Inspectify - Search Results",
+                restaurants: results.restaurants,
+                pagination: results.pagination,
+                filter: req.query,
+                prevUrl: page > 1 ? URL(page - 1) : null,
+                nextUrl: page < totalPages ? URL(page + 1) : null
+            });
+        } catch (e) {
+            res.status(400).render('search_results', {
+                title: 'Inspectify - Search Results',
+                error: e.message
+            });
+        }
+    })
+    .post(loginRedirect, (req, res) => {
+        const query = new URLSearchParams();
+        const name = req.body.name;
+        const filters = req.body.filters ?? {};
+
+        if (name?.trim()) { query.append("name", name.trim()); }
+
+        if (filters) {
+            for (const [filter, filtername] of Object.entries(filters)) { query.append(filter, filtername) }
+        }
+
+        if (query.toString() === '') {
+            res.redirect('/');
+        }
+        return res.redirect(`/restaurants/search?${query.toString()}`);
+    })
+
+router
+    .route('/featured').get(async (req, res) => {
+        try {
+            const results = await restaurants.SearchRestaurants({
+                grade: 'A',
+                restaurant_per_page: 3,
+                page: 1
+            });
+            res.json(results.restaurants);
+        }
+        catch (e) {
+            res.status(500).json({ error: 'Failed to load featured restaurants' });
+        }
+    })
 
 //GET /restaurants/:id
 //first we get the id from the request parameters
@@ -45,17 +74,17 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const restaurantId = req.params.id;
-        const result = await GetRestaurantbyID(restaurantId);
+        const result = await restaurants.GetRestaurantbyID(restaurantId);
 
         res.render('restaurant_detail', {
-            title: result.restaurant.name,
+            title: `Inspectify - ${result.restaurant.name}`,
             restaurant: result.restaurant,
             inspections: result.inspections,
             reviews: result.reviews
         });
     } catch (error) {
         res.status(404).render('error', {
-            title: 'Restaurant Not Found',
+            title: 'Inspectify - Restaurant Not Found',
             error: error.toString()
         });
     }

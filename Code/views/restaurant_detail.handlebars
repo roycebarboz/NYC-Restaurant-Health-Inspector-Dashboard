@@ -1,80 +1,97 @@
-<body>
-    <header>
-        <a id="landing_page" href="/">Back</a>
-        <h2>Restaurant Detail Page</h2>
-    </header>
-    <main>
-        <div id="Restaurant-Main">
-            <h1>{{restaurant.name}}</h1>
-            <p>Grade: {{restaurant.grade}}</p>
-            <div>
-                <span id="rating-stars"></span>
-                <span>{{restaurant.averageUserRating}}/5 {{restaurant.totalReviews}}/5</span>
-            </div>
-            <p>Address: {{restaurant.street}},{{restaurant.building}},{{restaurant.zipcode}}</p>
-            <p>Phone: {{restaurant.phone}}</p>
-            <p>Cuisine:{{restaurant.cuisineType}}</p>
-            <button id="FavouriteButton">Add to Favorites</button>
-            <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Review</a>
-            <div id="inspection-timeline">
-                {{#if inspections.length}}
-                    {{#each inspections}}
-                    <div class="inspection-card">
-                        <h3>{{this.inspectionDate}}</h3>
-                        <p>
-                            Grade:
-                            <span class="grade-{{this.grade}}">
-                                {{this.grade}}
-                            </span>
-                        </p>
-                        {{#if this.violations.length}}
-                            <ul class="violation-list">
-                                {{#each this.violations}}
-                                    <li>
-                                        <strong>{{this.violationCode}}</strong>
-                                        {{this.violationDescription}}
-                                        </li>
-                                {{/each}}
-                            </ul>
-                        {{else}}
-                            <p class="empty-violation">No violations</p>
-                        {{/if}}
-                        <a href="/inspections/{{this._id}}">View Details</a>
-                    </div>
-                    {{/each}}
-                {{else}}
-                    <p>No inspections available.</p>
-                {{/if}}
-            </div>
-            <div id="reviews-box">
-                {{#if reviews.length}}
-                    {{#each reviews}}
-                        <div class="review-card">
-                        <h3 class="review-username">{{this.username}}</h3>
-                        <span class="review-rating">{{this.rating}} ★</span>
-                        <h2 class="review-title">{{this.title}}</h2>
-                        <p class="review-text">{{this.reviewText}}</p>
-                        <div class="review-footer">
-                            <span class="visit-date">
-                            {{#if this.visitDate}}
-                                Visited: {{this.visitDate}}
-                            {{else}}
-                                Visit date not provided
-                            {{/if}}
-                            </span>
-                            {{#if (equals this.userId ../user._id)}}
-                                <span class="review-delete" data-review-id="{{this._id}}">X Delete</span>
-                            {{/if}}
-                            </div>
-                        </div>
-                    {{/each}}
-                {{else}}
-                    <p class="empty-reviews">No reviews</p>
-                {{/if}}
-            </div>
-            <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Write Review</a> 
+<header>
+    <div class="nav-links">
+        <a id="landing_page" href="/">Back</a> | <a href="/user_profile">Profile</a>
+    </div>
+    <h2>Restaurant Detail Page</h2>
+</header>
+<main>
+    <div id="Restaurant-Main">
+        <h1>{{restaurant.name}}</h1>
+        <p>Grade: {{restaurant.currentGrade}}</p>
+        <div>
+            <span id="rating-stars"></span>
+            <span>{{restaurant.averageUserRating}}/5 ({{restaurant.totalReviews}} reviews)</span>
         </div>
-    </main>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script src="/public/js/restaurant_detail.js"></script>
-</body>
+        <p>Address: {{restaurant.street}},{{restaurant.building}},{{restaurant.zipcode}}</p>
+        <p>Phone: {{restaurant.phone}}</p>
+        <p>Cuisine:{{restaurant.cuisineType}}</p>
+        <button id="FavouriteButton" data-restaurant-id="{{restaurant._id}}" {{#if isFavorite}}class="favorited"
+            {{/if}}>
+            {{#if isFavorite}}Remove from Favorites{{else}}Add to Favorites{{/if}}
+        </button>
+        <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Review</a>
+        <div id="inspection-timeline">
+            {{#if inspections.length}}
+            {{#each inspections}}
+            <div class="inspection-card">
+                <h3>{{this.inspectionDate}}</h3>
+                <p>
+                    Grade:
+                    <span class="grade-{{this.grade}}">
+                        {{this.grade}}
+                    </span>
+                </p>
+                {{#if this.violations.length}}
+                <ul class="violation-list">
+                    {{#each this.violations}}
+                    <li>
+                        <strong>{{this.violationCode}}</strong>
+                        {{this.violationDescription}}
+                    </li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p class="empty-violation">No violations</p>
+                {{/if}}
+                <a href="/inspections/{{this._id}}">View Details</a>
+            </div>
+            {{/each}}
+            {{else}}
+            <p>No inspections available.</p>
+            {{/if}}
+        </div>
+        <div id="reviews-box">
+            <h2>User Reviews!</h2>
+            {{#if reviews.length}}
+            <div class="overall-rating-section">
+                <p>Overall Rating: {{restaurant.averageUserRating}}/5
+                    ({{restaurant.totalReviews}} reviews)</p>
+                <div class="star-breakdown">
+                    <p>5 stars: {{getStarCount starBreakdown 5}} reviews</p>
+                    <p>4 stars: {{getStarCount starBreakdown 4}} reviews</p>
+                    <p>3 stars: {{getStarCount starBreakdown 3}} reviews</p>
+                    <p>2 stars: {{getStarCount starBreakdown 2}} reviews</p>
+                    <p>1 star: {{getStarCount starBreakdown 1}} reviews</p>
+                </div>
+            </div>
+            {{/if}}
+            {{#if reviews.length}}
+            {{#each reviews}}
+            <div class="review-card">
+                <h3 class="review-username">{{this.username}}</h3>
+                <span class="review-rating">{{this.rating}}/5</span>
+                <h2 class="review-title">{{this.title}}</h2>
+                <p class="review-text">{{this.reviewText}}</p>
+                <div class="review-footer">
+                    <span class="visit-date">
+                        {{#if this.visitDate}}
+                        Visited: {{this.visitDate}}
+                        {{else}}
+                        Visit date not provided
+                        {{/if}}
+                    </span>
+                    {{#if (equals this.userId ../user._id)}}
+                    <span class="review-delete" data-review-id="{{this._id}}">X Delete</span>
+                    {{/if}}
+                </div>
+            </div>
+            {{/each}}
+            {{else}}
+            <p class="empty-reviews">No reviews</p>
+            {{/if}}
+        </div>
+        <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Write Review</a>
+    </div>
+</main>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="/public/js/restaurant_detail.js"></script>

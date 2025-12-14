@@ -1,0 +1,30 @@
+<header>
+    <a href="/user_profile">Back to Profile</a>
+    <h1>Edit Profile</h1>
+</header>
+
+<main>
+    <form id="edit-profile-form" method="POST" action="/user_profile/edit">
+        {{#if error}}
+        <p class="error" id="server-error">{{error}}</p>
+        {{/if}}
+
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName"
+            value="{{#if user.profile.firstName}}{{user.profile.firstName}}{{/if}}" required>
+        <span class="error" id="firstName-error"></span>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName"
+            value="{{#if user.profile.lastName}}{{user.profile.lastName}}{{/if}}" required>
+        <span class="error" id="lastName-error"></span>
+
+        <label for="dateOfBirth">Date Of Birth:</label>
+        <input type="date" id="dateOfBirth" name="dateOfBirth"
+            value="{{#if user.profile.dateOfBirth}}{{user.profile.dateOfBirth}}{{/if}}" required>
+        <span class="error" id="dateOfBirth-error"></span>
+
+        <button type="submit" name="submitButton" id="submitButton">Save Changes</button>
+        <a href="/user_profile">Cancel</a>
+    </form>
+</main>

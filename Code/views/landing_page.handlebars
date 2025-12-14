@@ -1,47 +1,45 @@
-<body>
-    <header>
-        <div id="Topbar">
-            <h1>Inspectify</h1>
-            <nav class="links">
-                <a id="login" href="/signout">Log Out</a>
-            </nav>
-        </div>
-        <div class="search-UI">
-            <form id="search-bar" method="POST" action="/restaurants/search">
-                <select name="filter" id="filter">
-                    <option value="">Filter</option>
-                    <option value="borough">Borough</option>
-                    <option value="cuisineType">Cuisine</option>
-                    <option value="grade">Grade</option>
-                    <option value="zipcode">Zip Code</option>
-                    <option value="minScore">Min Score</option>
-                    <option value="maxScore">Max Score</option>
-                </select>
-                
-                <input type="text" id="filter_text" name="filter_text">
-                <button type="button" name="add_button" id="add_button">Add Filter</button>
-                
-                <div id="addedFilters"></div>
-                <div id="filter-error" class="error"></div>
-                
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name">
+<header>
+    <div id="Topbar">
+        <h1>Inspectify</h1>
+        <nav class="links">
+            <a id="user-profile" href="/user_profile">Profile</a>
+            <a id="login" href="/signout">Log Out</a>
+        </nav>
+    </div>
+    <div class="search-UI">
+        <form id="search-bar" method="POST" action="/restaurants/search">
+            <select name="filter" id="filter">
+                <option value="">Filter</option>
+                <option value="borough">Borough</option>
+                <option value="cuisineType">Cuisine</option>
+                <option value="grade">Grade</option>
+                <option value="zipcode">Zip Code</option>
+                <option value="minScore">Min Score</option>
+                <option value="maxScore">Max Score</option>
+            </select>
 
-                <button type="submit" name="submit_button" id="submit_button">Search</button>
-            </form>
-        </div>
-    </header>
+            <input type="text" id="filter_text" name="filter_text">
+            <button type="button" name="add_button" id="add_button">Add Filter</button>
 
-    <main>
-        <div id="landing_page_images"></div>
-    </main>
+            <div id="addedFilters"></div>
+            <div id="filter-error" class="error"></div>
 
-    <footer>
-        <div id="base_footer">
-            <p>@ 2025 Inspectify</p>
-        </div>
-    </footer>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script src="/public/js/landing_page.js"></script>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name">
 
-</body>
+            <button type="submit" name="submit_button" id="submit_button">Search</button>
+        </form>
+    </div>
+</header>
+
+<main>
+    <div id="landing_page_images"></div>
+</main>
+
+<footer>
+    <div id="base_footer">
+        <p>@ 2025 Inspectify</p>
+    </div>
+</footer>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="/public/js/landing_page.js"></script>

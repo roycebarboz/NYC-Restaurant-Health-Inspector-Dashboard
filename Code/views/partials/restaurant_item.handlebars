@@ -1,6 +1,5 @@
-<div id="restaurant-cards">
-    <div class="restaurant-card">
-    <h1>{{this.name}}</h2>
+<div class="restaurant-card">
+    <h1>{{this.name}}</h1>
 
     <p>
         <strong>Cuisine:</strong> {{this.cuisineType}}<br>
@@ -10,7 +9,7 @@
     <p>
         Grade:
         <span class="grade-{{this.currentGrade}}">
-        {{this.currentGrade}}
+            {{this.currentGrade}}
         </span>
         (Score: {{this.currentScore}})
     </p>
@@ -18,5 +17,4 @@
     <a href="/restaurants/{{this._id}}">
         View Details
     </a>
-    </div>
 </div>

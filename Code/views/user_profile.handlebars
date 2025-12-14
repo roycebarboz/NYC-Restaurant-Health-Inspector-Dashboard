@@ -1,0 +1,38 @@
+<header>
+    <a href="/">Back to Home</a>
+    <h1>User profile</h1>
+</header>
+
+<main>
+    <div id="user-info-section">
+        <h2>User Info</h2>
+        <p><strong>Name:</strong> {{#if user.profile}}{{user.profile.firstName}}
+            {{user.profile.lastName}}{{else}}{{user.username}}{{/if}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        {{#if user.profile.dateOfBirth}}
+        <p><strong>Age:</strong> {{calculateAge user.profile.dateOfBirth}}</p>
+        {{/if}}
+    </div>
+
+    <div id="favourite-restaurant-section">
+        <h2>Favourite Restaurant</h2>
+        {{#if favoriteRestaurant}}
+        <p>
+            <strong>{{favoriteRestaurant.name}}</strong> -
+            <span class="grade-{{favoriteRestaurant.grade}}">{{favoriteRestaurant.grade}}</span> -
+            <a href="/reviews/new/{{favoriteRestaurant._id}}">review</a>
+        </p>
+        <p>
+            <a href="/restaurants/{{favoriteRestaurant._id}}">{{favoriteRestaurant.street}},
+                {{favoriteRestaurant.building}}, {{favoriteRestaurant.zipcode}} &gt;&gt;</a>
+        </p>
+        {{else}}
+        <p>No favorite restaurant yet.</p>
+        {{/if}}
+    </div>
+
+    <div id="profile-actions">
+        <a href="/user_profile/edit" class="button-edit">Edit profile</a>
+        <a href="/favorites" class="button-view-all">View all Favourites</a>
+    </div>
+</main>

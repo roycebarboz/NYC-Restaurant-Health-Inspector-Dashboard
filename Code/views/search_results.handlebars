@@ -9,11 +9,13 @@
             {{/if}}
             </h1>
         <div id="search-filters">
-            {{#unless (equals @key "page")}}
-                <div class="filter-chip">
-                {{@key}}: {{this}}
-                <a href="/restaurants/search?{{removeFilter ../filter @key}}" class="remove"> X </a>
-                </div>
+            {{#each filter}}
+                {{#unless (equals @key "page")}}
+                    <div class="filter-chip">
+                    {{@key}}: {{this}}
+                    <a href="/restaurants/search?{{removeFilter ../filter @key}}" class="remove"> X </a>
+                    </div>
+                {{/unless}}
             {{/each}}
         </div>
     </header>
@@ -41,8 +43,8 @@
         </span>
 
         {{#if nextUrl}}
-		    <a href="{{nextUrl}}" id="next">Next</a> 
-	    {{else}}
+	        <a href="{{nextUrl}}" id="next">Next</a> 
+        {{else}}
             <span class="hidden">Next</span>
         {{/if}}
         </div> 

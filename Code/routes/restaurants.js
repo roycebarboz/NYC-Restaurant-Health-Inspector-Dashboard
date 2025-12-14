@@ -71,7 +71,9 @@ router
 //then we put the id in the GetRestaurantbyID function
 //throw an error if the id is not valid
 //return the result
-router.get('/:id', async (req, res) => {
+router
+    .route('/:id')
+    .get(loginRedirect, async (req, res) => {
     try {
         const restaurantId = req.params.id;
         const result = await restaurants.GetRestaurantbyID(restaurantId);

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { loginRedirect } from "../middleware/Auth.js"
 import {
   CreateReview,
   GetReviewsByRestaurantId,
@@ -30,30 +31,54 @@ const validateId = (id, varName = 'id') => {
  *  - reviewText
  *  - visitDate
  */
+
+router.get('/new', loginRedirect, (req, res) => {
+    const { restaurantId } = req.query;
+
+    if (!restaurantId) {
+        return res.status(400).render('error', {
+            error: 'Missing restaurant ID'
+        });
+    }
+
+    res.render('review_writing', {
+        title: 'Inspectify-Write Review',
+        restaurantId
+    });
+});
+
+
+
 router.post('/', async (req, res) => {
   try {
     const {
       restaurantId,
-      userId,
       rating,
       title,
       reviewText,
       visitDate
     } = req.body;
 
+    const userId = req.session.user._id;
+    const username = req.session.user.username;
+
     const newReview = await CreateReview({
       restaurantId,
       userId,
+      username,
       rating,
       title,
       reviewText,
       visitDate
     });
 
-    return res.status(201).json(newReview);
+    return res.redirect(`/restaurants/${restaurantId}`);
   } catch (e) {
     console.error('Error in POST /reviews:', e);
-    return res.status(400).json({ error: e.toString() });
+    return res.status(400).render('review_form', {
+      error: e.toString(),
+      restaurantId: req.body.restaurantId
+    });
   }
 });
 

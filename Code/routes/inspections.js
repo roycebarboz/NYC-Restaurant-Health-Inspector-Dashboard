@@ -1,4 +1,5 @@
 import {Router} from 'express';
+import { loginRedirect } from "../middleware/Auth.js"
 import { getInspectionsByRestaurantId } from '../data/inspections.js';
 import { inspections as inspectionsCollection } from '../config/mongoCollections.js';
 const router = Router();
@@ -19,7 +20,7 @@ const validateId = (id, varName = 'id') => {
  *  paginated list of all inspections
  *  defailt: page=1, limit=50
  */
-router.get('/', async (req, res) => {
+router.get('/', loginRedirect, async (req, res) => {
   try {
     const inspectionsCol = await inspectionsCollection();
 

@@ -1,24 +1,77 @@
 <body>
     <header>
-        <button>Back</button>
+        <a id="landing_page" href="/">Back</a>
         <h2>Restaurant Detail Page</h2>
     </header>
     <main>
         <div id="Restaurant-Main">
-            <h1>{{Restaurant.name}}</h1>
-            <p>Grade: {{Restaurant.grade}}</p>
+            <h1>{{restaurant.name}}</h1>
+            <p>Grade: {{restaurant.grade}}</p>
             <div>
                 <span id="rating-stars"></span>
-                <span>{{restaurant.avgRating}}/5 {{restaurant.reviewCount}}/5</span>
+                <span>{{restaurant.averageUserRating}}/5 {{restaurant.totalReviews}}/5</span>
             </div>
-            <p>Address: {{restaurant.address}}</p>
-            <p>Phone: {{restaurant.number}}</p>
-            <p>Cuisine:{{restaurant.cuisine}}</p>
+            <p>Address: {{restaurant.street}},{{restaurant.building}},{{restaurant.zipcode}}</p>
+            <p>Phone: {{restaurant.phone}}</p>
+            <p>Cuisine:{{restaurant.cuisineType}}</p>
             <button id="FavouriteButton">Add to Favorites</button>
-            <a id="writeReview" href="/review_writing">Click here to signup!</a>
-            <div id="inspection-timeline"></div>
-            <div id="reviews-box"></div>
-            <button id="writeReviw">Write Review</button> 
+            <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Review</a>
+            <div id="inspection-timeline">
+                {{#if inspections.length}}
+                    {{#each inspections}}
+                    <div class="inspection-card">
+                        <h3>{{this.inspectionDate}}</h3>
+                        <p>
+                            Grade:
+                            <span class="grade-{{this.grade}}">
+                                {{this.grade}}
+                            </span>
+                        </p>
+                        {{#if this.violations.length}}
+                            <ul class="violation-list">
+                                {{#each this.violations}}
+                                    <li>
+                                        <strong>{{this.violationCode}}</strong>
+                                        {{this.violationDescription}}
+                                        </li>
+                                {{/each}}
+                            </ul>
+                        {{else}}
+                            <p class="empty-violation">No violations</p>
+                        {{/if}}
+                        <a href="/inspections/{{this._id}}">View Details</a>
+                    </div>
+                    {{/each}}
+                {{else}}
+                    <p>No inspections available.</p>
+                {{/if}}
+            </div>
+            <div id="reviews-box">
+                {{#if reviews.length}}
+                    {{#each reviews}}
+                        <div class="review-card">
+                        <h3 class="review-username">{{this.username}}</h3>
+                        <span class="review-rating">{{this.rating}} ★</span>
+                        <h2 class="review-title">{{this.title}}</h2>
+                        <p class="review-text">{{this.reviewText}}</p>
+                        <div class="review-footer">
+                            <span class="visit-date">
+                            {{#if this.visitDate}}
+                                Visited: {{this.visitDate}}
+                            {{else}}
+                                Visit date not provided
+                            {{/if}}
+                            </span>
+
+                            <a class="details-link" href="/reviews/{{this._id}}">View Details</a>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <p class="empty-reviews">No reviews</p>
+                {{/if}}
+            </div>
+            <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Write Review</a> 
         </div>
     </main>
 </body>

@@ -73,12 +73,16 @@ $(function () {
         restaurants.forEach(res =>{
         const card = $('<div>').attr("id","landing_page_card")
 
+        const img_link = $("<a>").attr('href',`/restaurants/${res._id}`);
         const img = $('<img>')
-            .attr('src', res.image || '/public/images/no_image_1.png')
+            //update this is logo whenever we implement images
+            .attr('src', '/public/images/no_image_1.png')
             .attr('alt', res.name);
-        const name = $('<h2>').text(res.name);
 
-        card.append(img, name);
+        const name = $('<h2>').text(res.name);
+        
+        img_link.append(img);
+        card.append(img_link, name);
         container.append(card);
         });
     })

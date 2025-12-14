@@ -62,7 +62,9 @@
                                 Visit date not provided
                             {{/if}}
                             </span>
-
+                            {{#if (equals this.userId ../user._id)}}
+                                <span class="review-delete" data-review-id="{{this._id}}">X Delete</span>
+                            {{/if}}
                             </div>
                         </div>
                     {{/each}}
@@ -73,4 +75,6 @@
             <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Write Review</a> 
         </div>
     </main>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/public/js/restaurant_detail.js"></script>
 </body>

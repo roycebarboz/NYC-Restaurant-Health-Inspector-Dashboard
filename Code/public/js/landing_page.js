@@ -25,7 +25,7 @@ $(function () {
         const chip = $(`
             <div class="filter-chip">
                 ${filter}: ${value}
-                <span class="remove">✕</span>
+                <span class="remove">X</span>
             </div>
         `);
 

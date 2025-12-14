@@ -33,7 +33,7 @@ router
         const loginUser = await userfunc.loginUser(email,password);
 
         req.session.user = {
-        _id: loginUser.id,
+        _id: loginUser._id.toString(),
         username : loginUser.username,
         email : loginUser.email
         }

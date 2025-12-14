@@ -1,5 +1,3 @@
-//Here you will import route files and export them as used in previous labs
-
 import restaurantsRoutes from './restaurants.js';
 import usersRoutes from './users.js';
 import inspectionsRoutes from './inspections.js';

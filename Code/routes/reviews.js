@@ -32,24 +32,16 @@ const validateId = (id, varName = 'id') => {
  *  - visitDate
  */
 
-router.get('/new', loginRedirect, (req, res) => {
-    const { restaurantId } = req.query;
-
-    if (!restaurantId) {
-        return res.status(400).render('error', {
-            error: 'Missing restaurant ID'
-        });
-    }
-
+router.get('/new/:restaurantId', loginRedirect, (req, res) => {
     res.render('review_writing', {
-        title: 'Inspectify-Write Review',
-        restaurantId
-    });
+    title: 'Inspectify - Write Review',
+    restaurantId: req.params.restaurantId
+  });
 });
 
 
 
-router.post('/', async (req, res) => {
+router.post('/', loginRedirect, async (req, res) => {
   try {
     const {
       restaurantId,
@@ -75,7 +67,8 @@ router.post('/', async (req, res) => {
     return res.redirect(`/restaurants/${restaurantId}`);
   } catch (e) {
     console.error('Error in POST /reviews:', e);
-    return res.status(400).render('review_form', {
+    return res.status(400).render('review_writing', {
+      title: 'Inspectify - Write Review',
       error: e.toString(),
       restaurantId: req.body.restaurantId
     });
@@ -151,10 +144,13 @@ router.get('/:reviewId', async (req, res) => {
  *  - reviewText
  *  - visitDate
  */
-router.put('/:reviewId', async (req, res) => {
+router.put('/:reviewId', loginRedirect, async (req, res) => {
   try {
     const reviewId = validateId(req.params.reviewId, 'reviewId');
-
+    const review = await GetbyReviewID(reviewId);
+    if (review.userId !== req.session.user._id) {
+      return res.status(405).json({ error: 'Unauthorized' });
+    }
     const {
       rating,
       title,
@@ -184,10 +180,13 @@ router.put('/:reviewId', async (req, res) => {
 /**
  * DELETE /reviews/:reviewId
  */
-router.delete('/:reviewId', async (req, res) => {
+router.delete('/:reviewId', loginRedirect, async (req, res) => {
   try {
     const reviewId = validateId(req.params.reviewId, 'reviewId');
-
+    const review = await GetbyReviewID(reviewId);
+    if (review.userId !== req.session.user._id) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
     const deletedReview = await DeleteReview(reviewId);
 
     return res.json({

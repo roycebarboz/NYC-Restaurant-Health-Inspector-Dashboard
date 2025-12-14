@@ -171,7 +171,7 @@ export const CreateReview = async (reviewData) => {
         throw new Error(`Restaurant with id ${restaurantId} not found`);
     }
 
-    const user = await usersCol.findOne({ _id: userId });
+    const user = await usersCol.findOne({ _id: new ObjectId(userId) });
     if (!user) {
         throw new Error(`User with id ${userId} not found`);
     }

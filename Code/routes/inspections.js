@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import { loginRedirect } from "../middleware/Auth.js"
 import { getInspectionsByRestaurantId } from '../data/inspections.js';
-import { inspections as inspectionsCollection } from '../config/mongoCollections.js';
+import { inspections as inspectionsCollection, restaurants } from '../config/mongoCollections.js';
 const router = Router();
 
 const validateId = (id, varName = 'id') => {
@@ -82,12 +82,13 @@ router.get('/restaurant/:restaurantId', async (req, res) => {
 /**
  * GET /inspections/:inspectionId
  */
-router.get('/:inspectionId', async (req, res) => {
+router.get('/:inspectionId', loginRedirect, async (req, res) => {
   try{
     const inspectionId = validateId(req.params.inspectionId, 'inspectionId');
 
     const inspectionsCol = await inspectionsCollection();
     const inspection = await inspectionsCol.findOne({ _id: inspectionId });
+
 
     if (!inspection) {
       return res
@@ -95,11 +96,29 @@ router.get('/:inspectionId', async (req, res) => {
         .json({ error: `Inspection with id ${inspectionId} not found` });
     }
 
-    return res.json(inspection);
+    const restaurantsCol = await restaurants();
+    const restaurant = await restaurantsCol.findOne({
+      _id: inspection.restaurantId
+    });
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .json({ error: `Restaurant with id ${restaurant._id} not found` });
+    }
+
+    return res.render('inspection_detail',{
+      title: "Inspectify - Inspection Detail",
+      inspection,
+      restaurant
+    });
   } catch (e) {
     console.error('Error in GET /inspections/:inspectionId:', e);
     const msg = e.toString();
-    return res.status(400).json({ error: msg });
+    return res.status(400).json({ error: {
+      title: 'Inspectify - Error',
+      error: msg
+    }});
   }
 });
 

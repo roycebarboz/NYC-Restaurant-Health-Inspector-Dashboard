@@ -1,0 +1,24 @@
+<body>
+    <header>
+        <a id="landing_page" href="/">Back</a>
+        <h2></h2>
+    </header>
+    <main>
+        <div id="inspection-details-container">
+            <h2 id="inspection-restaurant">Regarding</h2>
+            <p id="inspection-date">{{inspections.inspectionDate}}</p>
+            <p id="inspection-type">{{inspections.inspectionType}}</p>
+            <p id="inspection-action">{{inspections.Action}}</p>
+            <p id="inspection-score">{{inspections.score}}</p>
+            <p id="inspection-grade">{{inspections.grade}}</p>
+            <p id="inspection-gradeDate">{{inspections.gradeDate}}</p>
+            <p id="inspection-recordDate">{{inspections.recordDate}}</p>
+            {{#each inspections.violations}}
+                <li>
+                    <strong>{{inspections.violationCode}}</strong>
+                    {{inspections.violationDescription}}
+                </li>
+            {{/each}}
+        </div>
+    </main>
+</body>

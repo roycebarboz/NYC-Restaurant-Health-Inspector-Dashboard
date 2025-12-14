@@ -31,7 +31,6 @@ const validateId = (id, varName = 'id') => {
  *  - reviewText
  *  - visitDate
  */
-
 router.get('/new/:restaurantId', loginRedirect, (req, res) => {
     res.render('review_writing', {
     title: 'Inspectify - Write Review',

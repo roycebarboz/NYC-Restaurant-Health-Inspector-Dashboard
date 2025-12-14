@@ -1,22 +1,22 @@
 <body>
     <header>
-        <a id="landing_page" href="/">Back</a>
+        <a id="restaurant" href="/restaurants/{{restaurant._id}}">Back to Restaurant Page</a>
         <h2></h2>
     </header>
     <main>
         <div id="inspection-details-container">
-            <h2 id="inspection-restaurant">Regarding</h2>
-            <p id="inspection-date">{{inspections.inspectionDate}}</p>
-            <p id="inspection-type">{{inspections.inspectionType}}</p>
-            <p id="inspection-action">{{inspections.Action}}</p>
-            <p id="inspection-score">{{inspections.score}}</p>
-            <p id="inspection-grade">{{inspections.grade}}</p>
-            <p id="inspection-gradeDate">{{inspections.gradeDate}}</p>
-            <p id="inspection-recordDate">{{inspections.recordDate}}</p>
-            {{#each inspections.violations}}
+            <h2 id="inspection-restaurant">Regarding Inspection {{inspection.camis}} for {{restaurant.name}}</h2>
+            <p id="inspection-date">Inspection Date: {{inspection.inspectionDate}}</p>
+            <p id="inspection-type">Inspection Type: {{inspection.inspectionType}}</p>
+            <p id="inspection-action">Inspection Done: {{inspection.Action}}</p>
+            <p id="inspection-score">Inspection Score: {{inspection.score}}</p>
+            <p id="inspection-grade">Inspection Grade: {{inspection.grade}}</p>
+            <p id="inspection-gradeDate">Grade Date: {{inspection.gradeDate}}</p>
+            <p id="inspection-recordDate">Record Date: {{inspection.recordDate}}</p>
+            {{#each inspection.violations}}
                 <li>
-                    <strong>{{inspections.violationCode}}</strong>
-                    {{inspections.violationDescription}}
+                    <strong>Code: {{this.violationCode}}</strong> <br>
+                    Description: {{this.violationDescription}}
                 </li>
             {{/each}}
         </div>

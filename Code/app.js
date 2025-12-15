@@ -45,18 +45,6 @@ const handlebarsInstance = exphbs.create({
       }
       return age;
     },
-    renderStars: (rating) => {
-      if (!rating || rating === 0) return '☆☆☆☆☆';
-      const fullStars = Math.floor(rating);
-      let stars = '';
-      for (let i = 0; i < fullStars; i++) stars += '⭐';
-      while (stars.length < 5) stars += '☆';
-      return stars;
-    },
-    countReviewsByRating: (reviews, rating) => {
-      if (!reviews || !Array.isArray(reviews)) return 0;
-      return reviews.filter(r => r.rating === rating).length;
-    },
     getStarCount: (starBreakdown, rating) => {
       if (!starBreakdown) return 0;
       return starBreakdown[rating] || 0;

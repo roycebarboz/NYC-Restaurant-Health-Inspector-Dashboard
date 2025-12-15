@@ -23,12 +23,12 @@ const seed = async () => {
         // Importing Restaurants in the database
         console.log('Importing Restaurants...');
         const restaurantResult = await CreateRestaurant(csvPath);
-        console.log(`✅ Restaurants Import Complete: ${restaurantResult.insertedCount} restaurants imported\n`);
+        console.log(`Restaurants Import Complete: ${restaurantResult.insertedCount} restaurants imported\n`);
 
         // Importing Inspections in the database afte
         console.log('Importing Inspections...');
         const inspectionResult = await createInspection(csvPath);
-        console.log(`✅ Inspections Import Complete: ${inspectionResult.insertedCount} inspections imported\n`);
+        console.log(`Inspections Import Complete: ${inspectionResult.insertedCount} inspections imported\n`);
 
         console.log('All Data Import Complete!');
         console.log(`Total Restaurants: ${restaurantResult.insertedCount}`);

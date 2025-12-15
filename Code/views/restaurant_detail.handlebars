@@ -9,7 +9,6 @@
         <h1>{{restaurant.name}}</h1>
         <p>Grade: {{restaurant.currentGrade}}</p>
         <div>
-            <span id="rating-stars"></span>
             <span>{{restaurant.averageUserRating}}/5 ({{restaurant.totalReviews}} reviews)</span>
         </div>
         <p>Address: {{restaurant.street}},{{restaurant.building}},{{restaurant.zipcode}}</p>
@@ -19,7 +18,7 @@
             {{/if}}>
             {{#if isFavorite}}Remove from Favorites{{else}}Add to Favorites{{/if}}
         </button>
-        <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Review</a>
+        <a class="writeReview" href="/reviews/new/{{restaurant._id}}">Write Review</a>
         <div id="inspection-timeline">
             {{#if inspections.length}}
             {{#each inspections}}
